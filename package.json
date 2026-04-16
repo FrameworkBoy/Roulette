@@ -23,7 +23,10 @@
   "private": true,
   "devDependencies": {
     "@react-native-windows/cli": "^0.81.5",
-    "@rnx-kit/jest-preset": "^0.1.17"
+    "@rnx-kit/jest-preset": "^0.1.17",
+    "@types/react": "^19.2.14",
+    "@types/react-native": "^0.73.0",
+    "typescript": "^6.0.2"
   },
   "react-native-windows": {
     "init-windows": {
