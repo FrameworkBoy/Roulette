@@ -6,13 +6,30 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "windows": "npx @react-native-community/cli run-windows",
+    "test:windows": "jest --config jest.config.windows.js"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~6.1.2",
     "expo": "~54.0.33",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
-    "react-native": "0.81.5"
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-web": "^0.21.0",
+    "react-native-windows": "^0.81.13"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@react-native-windows/cli": "^0.81.5",
+    "@rnx-kit/jest-preset": "^0.1.17"
+  },
+  "react-native-windows": {
+    "init-windows": {
+      "name": "roulette",
+      "namespace": "roulette",
+      "template": "cpp-app"
+    }
+  }
 }

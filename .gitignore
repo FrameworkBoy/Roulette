@@ -34,3 +34,23 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Android
+android/app/build/
+android/.gradle/
+android/local.properties
+android/build/
+android/captures/
+android/.externalNativeBuild/
+android/.cxx/
+
+# Windows
+windows/packages/
+windows/*.sln.DotSettings.user
+windows/**/*.vcxproj.user
+windows/**/Debug/
+windows/**/Release/
+windows/**/x64/
+windows/**/x86/
+windows/**/ARM/
+windows/**/ARM64/
