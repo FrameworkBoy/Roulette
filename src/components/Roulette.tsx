@@ -1,28 +1,13 @@
 import React, { useRef, useState } from 'react';
-import {
-  Animated,
-  Easing,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import prizesData from '../data/prizes.json';
-
-type Prize = {
-  id: number;
-  label: string;
-  points: number;
-  startAngle: number;
-  endAngle: number;
-};
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
+import { PRIZE_SYSTEM_CONFIG } from '../config/prizes';
+import type { Prize } from '../config/prizes';
+import { PrizeService } from '../services/PrizeService';
+import { Colors } from '../constants/colors';
 
 type Props = {
   onSpinComplete?: (prize: Prize) => void;
 };
-
-const prizes = prizesData as Prize[];
 
 const WHEEL_SIZE = 300;
 const SPIN_DURATION = 4000;
@@ -30,6 +15,7 @@ const FULL_SPINS = 5;
 
 export default function Roulette({ onSpinComplete }: Props = {}) {
   const [isSpinning, setIsSpinning] = useState(false);
+  const [isSelecting, setIsSelecting] = useState(false);
   const [result, setResult] = useState<Prize | null>(null);
   const spinValue = useRef(new Animated.Value(0)).current;
   const totalRotation = useRef(0);
@@ -39,17 +25,10 @@ export default function Roulette({ onSpinComplete }: Props = {}) {
     outputRange: ['0deg', '360deg'],
   });
 
-  const handleSpin = () => {
-    if (isSpinning) return;
-    setIsSpinning(true);
-    setResult(null);
-
-    const prize = prizes[Math.floor(Math.random() * prizes.length)];
-    const centerAngle = (prize.startAngle + prize.endAngle) / 2;
+  const spinToAngle = (centerAngle: number, prize: Prize) => {
     const currentMod = totalRotation.current % 360;
     const diff = (centerAngle - currentMod + 360) % 360;
     const target = totalRotation.current + FULL_SPINS * 360 + (diff === 0 ? 360 : diff);
-
     totalRotation.current = target;
 
     Animated.timing(spinValue, {
@@ -63,6 +42,25 @@ export default function Roulette({ onSpinComplete }: Props = {}) {
       onSpinComplete?.(prize);
     });
   };
+
+  const handleSpin = async () => {
+    if (isSpinning || isSelecting) return;
+    setIsSelecting(true);
+    setResult(null);
+
+    const prize = await PrizeService.selectPrize();
+    const slot = PrizeService.getSlotForPrize(prize.id);
+    const centerAngle = (slot.startAngle + slot.endAngle) / 2;
+
+    await PrizeService.consumePrize(prize.id);
+
+    setIsSelecting(false);
+    setIsSpinning(true);
+    spinToAngle(centerAngle, prize);
+  };
+
+  const isNoPrize = result?.id === PRIZE_SYSTEM_CONFIG.noPrizeId;
+  const busy = isSpinning || isSelecting;
 
   return (
     <View style={styles.container}>
@@ -79,12 +77,12 @@ export default function Roulette({ onSpinComplete }: Props = {}) {
 
       <View style={styles.resultContainer}>
         {result ? (
-          <Text style={styles.resultText}>
-            {result.points > 0 ? `You won ${result.label}!` : result.label}
+          <Text style={[styles.resultText, isNoPrize && styles.resultNoPrize]}>
+            {isNoPrize ? result.label : `Parabéns! ${result.label}`}
           </Text>
         ) : (
           <Text style={styles.hint}>
-            {isSpinning ? 'Good luck...' : 'Press SPIN to play!'}
+            {isSelecting ? 'Sorteando...' : isSpinning ? 'Boa sorte...' : 'Pressione GIRAR!'}
           </Text>
         )}
       </View>
@@ -92,14 +90,14 @@ export default function Roulette({ onSpinComplete }: Props = {}) {
       <Pressable
         style={({ pressed }) => [
           styles.button,
-          isSpinning && styles.buttonDisabled,
-          pressed && !isSpinning && styles.buttonPressed,
+          busy && styles.buttonDisabled,
+          pressed && !busy && styles.buttonPressed,
         ]}
         onPress={handleSpin}
-        disabled={isSpinning}
+        disabled={busy}
       >
         <Text style={styles.buttonText}>
-          {isSpinning ? 'Spinning...' : 'SPIN'}
+          {isSelecting ? '...' : isSpinning ? 'Girando...' : 'GIRAR'}
         </Text>
       </Pressable>
     </View>
@@ -132,7 +130,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: '#E91E8C',
+    borderTopColor: Colors.primary,
   },
   wheel: {
     width: WHEEL_SIZE,
@@ -143,27 +141,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   resultText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#E91E8C',
+    color: Colors.primary,
+    textAlign: 'center',
+  },
+  resultNoPrize: {
+    color: Colors.textSecondary,
   },
   hint: {
     fontSize: 15,
-    color: '#888',
+    color: Colors.textSecondary,
   },
   button: {
-    backgroundColor: '#E91E8C',
+    backgroundColor: Colors.primary,
     paddingHorizontal: 52,
     paddingVertical: 16,
     borderRadius: 32,
-    shadowColor: '#E91E8C',
+    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 6,
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: Colors.border,
     shadowOpacity: 0,
     elevation: 0,
   },
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.text,
     fontSize: 18,
     fontWeight: 'bold',
     letterSpacing: 3,

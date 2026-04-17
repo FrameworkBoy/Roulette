@@ -3,6 +3,7 @@ import { Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native
 import { INACTIVITY_CONFIG, DEFAULT_TIMEOUT } from '../config/inactivity';
 import { navigationRef } from '../navigation/navigationRef';
 import { Colors } from '../constants/colors';
+import { SessionService } from '../services/SessionService';
 
 type Props = {
   children: React.ReactNode;
@@ -12,8 +13,8 @@ export default function InactivityGuard({ children }: Props) {
   const [showWarning, setShowWarning] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const idleTimer = useRef<ReturnType<typeof setTimeout>>();
-  const countdownInterval = useRef<ReturnType<typeof setInterval>>();
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const countdownInterval = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   const clearAllTimers = () => {
     clearTimeout(idleTimer.current);
@@ -24,6 +25,7 @@ export default function InactivityGuard({ children }: Props) {
     clearAllTimers();
     setShowWarning(false);
     fadeAnim.setValue(0);
+    SessionService.recordInactivityReset();
     if (navigationRef.isReady()) {
       navigationRef.navigate('Home');
     }
@@ -31,6 +33,7 @@ export default function InactivityGuard({ children }: Props) {
 
   const startCountdown = useCallback(
     (seconds: number) => {
+      SessionService.recordInactivityWarning();
       setCountdown(seconds);
       setShowWarning(true);
       Animated.timing(fadeAnim, {

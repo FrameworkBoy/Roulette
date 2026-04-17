@@ -1,15 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Animated,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import allQuestions from '../data/questions.json';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
+import { useSession } from '../context/SessionContext';
 
 type Question = {
   id: number;
@@ -20,12 +15,14 @@ type Question = {
 
 const TOTAL = 5;
 const REVEAL_DELAY = 900;
+const MIN_TO_WIN = 3;
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
 export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
+  const session = useSession();
   const [questions] = useState<Question[]>(() =>
     shuffle(allQuestions as Question[]).slice(0, TOTAL),
   );
@@ -36,6 +33,10 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
   const progressAnim = useRef(new Animated.Value(0)).current;
 
   const current = questions[currentIndex];
+
+  useEffect(() => {
+    session.recordQuizStart();
+  }, []);
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -54,6 +55,17 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
       const correct = index === current.correctIndex;
       if (correct) setScore((s) => s + 1);
 
+      session.recordQuizAnswer({
+        questionId: current.id,
+        question: current.question,
+        selectedIndex: index,
+        selectedLabel: current.options[index],
+        correctIndex: current.correctIndex,
+        correctLabel: current.options[current.correctIndex],
+        isCorrect: correct,
+        answeredAt: new Date().toISOString(),
+      });
+
       setTimeout(() => {
         if (currentIndex + 1 < TOTAL) {
           setCurrentIndex((i) => i + 1);
@@ -61,11 +73,13 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
           setIsRevealing(false);
         } else {
           const finalScore = correct ? score + 1 : score;
+          const eligible = finalScore >= MIN_TO_WIN;
+          session.recordQuizComplete(finalScore, TOTAL, eligible);
           navigation.replace('Result', { score: finalScore, total: TOTAL });
         }
       }, REVEAL_DELAY);
     },
-    [isRevealing, current, currentIndex, score, navigation],
+    [isRevealing, current, currentIndex, score, navigation, session],
   );
 
   const getOptionStyle = (index: number) => {
@@ -119,9 +133,7 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
               onPress={() => handleSelect(index)}
               disabled={isRevealing}
             >
-              <Text style={styles.optionLetter}>
-                {String.fromCharCode(65 + index)}
-              </Text>
+              <Text style={styles.optionLetter}>{String.fromCharCode(65 + index)}</Text>
               <Text style={getOptionTextStyle(index)}>{option}</Text>
             </Pressable>
           ))}
@@ -146,9 +158,7 @@ const styles = StyleSheet.create({
     maxWidth: 640,
     alignSelf: 'center',
   },
-  progressContainer: {
-    gap: 8,
-  },
+  progressContainer: { gap: 8 },
   progressTrack: {
     height: 6,
     backgroundColor: Colors.surface,
@@ -165,9 +175,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'right',
   },
-  questionContainer: {
-    gap: 12,
-  },
+  questionContainer: { gap: 12 },
   questionNumber: {
     fontSize: 14,
     color: Colors.primary,
@@ -181,9 +189,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     lineHeight: 34,
   },
-  options: {
-    gap: 12,
-  },
+  options: { gap: 12 },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -207,9 +213,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.error,
     backgroundColor: 'rgba(244,67,54,0.15)',
   },
-  optionDimmed: {
-    opacity: 0.4,
-  },
+  optionDimmed: { opacity: 0.4 },
   optionLetter: {
     width: 32,
     height: 32,
@@ -222,15 +226,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     overflow: 'hidden',
   },
-  optionText: {
-    flex: 1,
-    fontSize: 17,
-    color: Colors.text,
-  },
-  optionTextHighlight: {
-    fontWeight: 'bold',
-  },
-  optionTextDimmed: {
-    color: Colors.textSecondary,
-  },
+  optionText: { flex: 1, fontSize: 17, color: Colors.text },
+  optionTextHighlight: { fontWeight: 'bold' },
+  optionTextDimmed: { color: Colors.textSecondary },
 });

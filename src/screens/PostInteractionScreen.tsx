@@ -1,7 +1,9 @@
-import React from 'react';
-import { View, Text, Pressable, StyleSheet, SafeAreaView, Linking } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
+import { useSession } from '../context/SessionContext';
 
 const UNITS = [
   {
@@ -17,6 +19,12 @@ const UNITS = [
 ];
 
 export default function PostInteractionScreen({ navigation }: ScreenProps<'PostInteraction'>) {
+  const session = useSession();
+
+  useEffect(() => {
+    session.recordPostInteractionView();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -32,7 +40,7 @@ export default function PostInteractionScreen({ navigation }: ScreenProps<'PostI
             <Pressable
               key={unit.id}
               style={({ pressed }) => [styles.unitButton, pressed && styles.pressed]}
-              onPress={() => Linking.openURL(unit.url)}
+              onPress={() => { session.recordUnitOpened(unit.id, unit.label); Linking.openURL(unit.url); }}
             >
               <Text style={styles.unitButtonIcon}>📍</Text>
               <Text style={styles.unitButtonText}>{unit.label}</Text>

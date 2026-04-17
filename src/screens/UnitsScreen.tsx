@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, SafeAreaView, Linking } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
+import { useSession } from '../context/SessionContext';
 
 const UNITS = [
   {
@@ -19,6 +21,7 @@ const UNITS = [
 ];
 
 export default function UnitsScreen({ navigation }: ScreenProps<'Units'>) {
+  const session = useSession();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -32,7 +35,7 @@ export default function UnitsScreen({ navigation }: ScreenProps<'Units'>) {
             <Pressable
               key={unit.id}
               style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-              onPress={() => Linking.openURL(unit.url)}
+              onPress={() => { session.recordUnitOpened(unit.id, unit.name); Linking.openURL(unit.url); }}
             >
               <Text style={styles.cardIcon}>📍</Text>
               <Text style={styles.cardName}>{unit.name}</Text>

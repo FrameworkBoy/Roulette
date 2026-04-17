@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import Roulette from '../components/Roulette';
 import type { ScreenProps } from '../types/navigation';
+import { useSession } from '../context/SessionContext';
+import type { Prize } from '../config/prizes';
 
 export default function RouletteScreen({ navigation }: ScreenProps<'RouletteGame'>) {
   const [done, setDone] = useState(false);
+  const session = useSession();
+
+  useEffect(() => {
+    session.recordRouletteView();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -16,7 +23,16 @@ export default function RouletteScreen({ navigation }: ScreenProps<'RouletteGame
           <Text style={styles.subtitle}>Você ganhou o direito de girar. Boa sorte!</Text>
         </View>
 
-        <Roulette onSpinComplete={() => setDone(true)} />
+        <Roulette
+          onSpinComplete={(prize: Prize) => {
+            session.recordRouletteSpin({
+              prizeId: prize.id,
+              prizeLabel: prize.label,
+              spunAt: new Date().toISOString(),
+            });
+            setDone(true);
+          }}
+        />
 
         {done && (
           <Pressable

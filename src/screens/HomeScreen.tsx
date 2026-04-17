@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
+import { useSession } from '../context/SessionContext';
 
 export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
+  const session = useSession();
+
+  useEffect(() => {
+    session.createSession();
+    session.recordHomeView();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -25,7 +33,7 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
 
           <Pressable
             style={({ pressed }) => [styles.outlineButton, pressed && styles.pressed]}
-            onPress={() => navigation.navigate('Units')}
+            onPress={() => { session.recordUnitsScreenView(); navigation.navigate('Units'); }}
           >
             <Text style={styles.outlineButtonIcon}>📍</Text>
             <Text style={styles.outlineButtonText}>Conheça nossas unidades</Text>

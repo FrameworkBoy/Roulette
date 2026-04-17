@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
+import { useSession } from '../context/SessionContext';
 
 const MIN_TO_WIN = 3;
 
 export default function ResultScreen({ route, navigation }: ScreenProps<'Result'>) {
   const { score, total } = route.params;
   const eligible = score >= MIN_TO_WIN;
+  const session = useSession();
+
+  useEffect(() => {
+    session.recordResultView(score, total);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
