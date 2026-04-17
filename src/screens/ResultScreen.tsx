@@ -46,7 +46,7 @@ export default function ResultScreen({ route, navigation }: ScreenProps<'Result'
         <View style={styles.bottom}>
           <Pressable
             style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-            onPress={() => navigation.navigate(eligible ? 'RouletteGame' : 'Units')}
+            onPress={() => eligible ? navigation.navigate('RouletteGame') : navigation.navigate('Units', { fromQuiz: true })}
           >
             <Text style={styles.primaryButtonText}>
               {eligible ? 'Girar roleta' : 'Ver nossas unidades'}

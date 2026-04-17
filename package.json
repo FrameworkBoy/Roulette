@@ -1,6 +1,6 @@
 {
   "name": "roulette",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "main": "index.ts",
   "scripts": {
     "start": "expo start --dev-client",
@@ -59,12 +59,9 @@
       "target": "nsis"
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "allowElevation": true,
-      "installerLanguages": ["pt_BR", "en_US"],
-      "language": "1046",
-      "script": "electron/installer.nsh"
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": true
     }
   },
   "react-native-windows": {

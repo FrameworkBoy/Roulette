@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
 import ScreenLogo from "../components/ScreenLogo";
-import { scale, vw, W } from "../utils/responsive";
+import { scale, vw, vh, W } from "../utils/responsive";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../constants/colors";
@@ -26,7 +26,7 @@ export default function RouletteScreen({
         <ScreenLogo size="small" />
 
         <RouletteCode
-          size={vw(85)}
+          size={Math.min(vw(85), vh(60))}
           onSpinComplete={(p: Prize) => {
             session.recordRouletteSpin({
               prizeId: p.id,
@@ -54,7 +54,7 @@ export default function RouletteScreen({
               ]}
               onPress={() => {
                 setPrize(null);
-                navigation.navigate("Units");
+                navigation.navigate("Units", { fromQuiz: true });
               }}
             >
               <Text style={styles.modalButtonText}>Ver nossas unidades</Text>
