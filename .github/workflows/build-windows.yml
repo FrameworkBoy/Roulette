@@ -22,6 +22,13 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Install Windows SDK 10.0.22621
+        shell: pwsh
+        run: |
+          $installer = "$env:TEMP\winsdksetup.exe"
+          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/p/?linkid=2196241" -OutFile $installer
+          Start-Process -FilePath $installer -ArgumentList "/features + /q /ceip off" -Wait
+
       - name: Build Windows (Release)
         run: npx @react-native-community/cli run-windows --release --no-launch
         env:
