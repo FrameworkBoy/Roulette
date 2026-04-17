@@ -1,0 +1,42 @@
+name: Generate Signing Certificate (run once)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: windows-latest
+
+    steps:
+      - name: Generate self-signed certificate
+        shell: pwsh
+        run: |
+          $password = ConvertTo-SecureString -String "${{ secrets.WINDOWS_CERT_PASSWORD }}" -Force -AsPlainText
+
+          $cert = New-SelfSignedCertificate `
+            -Type Custom `
+            -Subject "CN=andre-grigaitis" `
+            -KeyUsage DigitalSignature `
+            -FriendlyName "Roulette Dev Signing Cert" `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}") `
+            -NotAfter (Get-Date).AddYears(10)
+
+          # Export PFX (private key — goes into GitHub secret)
+          Export-PfxCertificate -Cert $cert -FilePath "signing.pfx" -Password $password
+
+          # Export .cer (public key — install this on target machines)
+          Export-Certificate -Cert $cert -FilePath "signing.cer"
+
+          # Base64-encode the PFX so it can be stored as a GitHub secret
+          $b64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes("signing.pfx"))
+          Set-Content -Path "cert-base64.txt" -Value $b64
+
+      - name: Upload certificate files
+        uses: actions/upload-artifact@v4
+        with:
+          name: signing-certificate
+          path: |
+            signing.cer
+            cert-base64.txt
+          retention-days: 1
