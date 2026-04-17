@@ -10,6 +10,7 @@ import QuizScreen from '../screens/QuizScreen';
 import ResultScreen from '../screens/ResultScreen';
 import RouletteScreen from '../screens/RouletteScreen';
 import PostInteractionScreen from '../screens/PostInteractionScreen';
+import AdminPanelScreen from '../screens/AdminPanelScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,6 +25,7 @@ export default function AppNavigator() {
           <Stack.Screen name="Result" component={ResultScreen} />
           <Stack.Screen name="RouletteGame" component={RouletteScreen} />
           <Stack.Screen name="PostInteraction" component={PostInteractionScreen} />
+          <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
         </Stack.Navigator>
       </InactivityGuard>
     </NavigationContainer>

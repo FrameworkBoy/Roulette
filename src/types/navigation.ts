@@ -7,6 +7,7 @@ export type RootStackParamList = {
   Result: { score: number; total: number };
   RouletteGame: undefined;
   PostInteraction: undefined;
+  AdminPanel: undefined;
 };
 
 export type ScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<

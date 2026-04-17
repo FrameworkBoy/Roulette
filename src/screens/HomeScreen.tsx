@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
@@ -7,14 +7,32 @@ import { useSession } from '../context/SessionContext';
 
 export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
   const session = useSession();
+  const tapCount = useRef(0);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [, setTick] = useState(0);
 
   useEffect(() => {
     session.createSession();
     session.recordHomeView();
   }, []);
 
+  const handleSecretTap = () => {
+    tapCount.current += 1;
+    clearTimeout(tapTimer.current);
+    if (tapCount.current >= 3) {
+      tapCount.current = 0;
+      navigation.navigate('AdminPanel');
+      return;
+    }
+    tapTimer.current = setTimeout(() => {
+      tapCount.current = 0;
+      setTick((t) => t + 1);
+    }, 1500);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <Pressable style={styles.secretBtn} onPress={handleSecretTap} />
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Bem-vindo!</Text>
@@ -129,5 +147,13 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.8,
     transform: [{ scale: 0.98 }],
+  },
+  secretBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 60,
+    height: 60,
+    zIndex: 99,
   },
 });
