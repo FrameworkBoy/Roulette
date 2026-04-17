@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonSub: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.75)',
+    color: Colors.textSecondary,
   },
   outlineButton: {
     borderWidth: 2,

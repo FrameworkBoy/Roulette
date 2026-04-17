@@ -203,15 +203,15 @@ const styles = StyleSheet.create({
   },
   optionSelected: {
     borderColor: Colors.primary,
-    backgroundColor: 'rgba(233,30,140,0.12)',
+    backgroundColor: Colors.primaryPastel,
   },
   optionCorrect: {
     borderColor: Colors.success,
-    backgroundColor: 'rgba(76,175,80,0.15)',
+    backgroundColor: Colors.successPastel,
   },
   optionWrong: {
     borderColor: Colors.error,
-    backgroundColor: 'rgba(244,67,54,0.15)',
+    backgroundColor: Colors.errorPastel,
   },
   optionDimmed: { opacity: 0.4 },
   optionLetter: {

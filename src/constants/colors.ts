@@ -1,12 +1,24 @@
 export const Colors = {
-  background: '#0F0E1A',
-  surface: '#1E1D2E',
-  border: '#2D2C40',
-  primary: '#E91E8C',
-  primaryDark: '#C2185B',
-  text: '#FFFFFF',
-  textSecondary: 'rgba(255,255,255,0.6)',
-  success: '#4CAF50',
-  error: '#F44336',
-  overlay: 'rgba(0,0,0,0.5)',
+  // Backgrounds
+  background: '#fafafa',
+  surface: '#ffffff',
+  border: '#e2e2e4',
+
+  // Brand yellow (primary CTA — matches Smart Fit buttons)
+  primary: '#ffb612',
+  primaryDark: '#eba200',
+  primaryPastel: 'rgba(255,182,18,0.12)',
+
+  // Typography
+  text: 'rgba(1,1,20,0.88)',
+  textSecondary: 'rgba(1,1,20,0.48)',
+  textOnPrimary: '#000000',
+
+  // Semantic
+  success: '#25a769',
+  successPastel: 'rgba(37,167,105,0.12)',
+  error: '#c92c3f',
+  errorPastel: 'rgba(201,44,63,0.12)',
+
+  overlay: 'rgba(0,0,0,0.6)',
 };

@@ -60,7 +60,7 @@ export default function Roulette({ onSpinComplete }: Props = {}) {
   };
 
   const isNoPrize = result?.id === PRIZE_SYSTEM_CONFIG.noPrizeId;
-  const busy = isSpinning || isSelecting;
+  const busy = isSpinning || isSelecting || result !== null;
 
   return (
     <View style={styles.container}>
