@@ -1,0 +1,10 @@
+[
+  { "id": 1, "label": "100pts", "points": 100, "startAngle": 0,   "endAngle": 45  },
+  { "id": 2, "label": "Que pena", "points": 0,  "startAngle": 45,  "endAngle": 90  },
+  { "id": 3, "label": "50pts",    "points": 50,  "startAngle": 90,  "endAngle": 135 },
+  { "id": 4, "label": "Que pena", "points": 0,  "startAngle": 135, "endAngle": 180 },
+  { "id": 5, "label": "100pts", "points": 100, "startAngle": 180, "endAngle": 225 },
+  { "id": 6, "label": "50pts",    "points": 50,  "startAngle": 225, "endAngle": 270 },
+  { "id": 7, "label": "Que pena", "points": 0,  "startAngle": 270, "endAngle": 315 },
+  { "id": 8, "label": "50pts",    "points": 50,  "startAngle": 315, "endAngle": 360 }
+]

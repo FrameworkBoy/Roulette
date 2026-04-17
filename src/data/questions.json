@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "question": "Quantas vezes por semana a OMS recomenda praticar atividade física moderada?",
+    "options": ["1 vez", "2 vezes", "3 a 5 vezes", "Todos os dias"],
+    "correctIndex": 2
+  },
+  {
+    "id": 2,
+    "question": "Qual é a quantidade mínima de água recomendada para consumo diário de um adulto?",
+    "options": ["500ml", "1 litro", "2 litros", "4 litros"],
+    "correctIndex": 2
+  },
+  {
+    "id": 3,
+    "question": "Qual nutriente é essencial para a recuperação muscular após o exercício?",
+    "options": ["Carboidrato", "Proteína", "Gordura", "Fibra"],
+    "correctIndex": 1
+  },
+  {
+    "id": 4,
+    "question": "Quantas horas de sono são recomendadas para adultos por noite?",
+    "options": ["4 a 5 horas", "6 a 7 horas", "7 a 9 horas", "10 a 12 horas"],
+    "correctIndex": 2
+  },
+  {
+    "id": 5,
+    "question": "Qual atividade física é considerada de baixo impacto?",
+    "options": ["Corrida", "Natação", "Basquete", "Futebol"],
+    "correctIndex": 1
+  },
+  {
+    "id": 6,
+    "question": "Qual vitamina é sintetizada pelo corpo através da exposição ao sol?",
+    "options": ["Vitamina A", "Vitamina B12", "Vitamina C", "Vitamina D"],
+    "correctIndex": 3
+  },
+  {
+    "id": 7,
+    "question": "O que é IMC (Índice de Massa Corporal)?",
+    "options": [
+      "Medida da força muscular",
+      "Relação entre peso e altura",
+      "Nível de colesterol no sangue",
+      "Taxa de metabolismo basal"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": 8,
+    "question": "Qual é a principal função do alongamento antes do exercício?",
+    "options": [
+      "Aumentar a massa muscular",
+      "Reduzir calorias",
+      "Preparar músculos e prevenir lesões",
+      "Aumentar a frequência cardíaca"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": 9,
+    "question": "Qual exercício trabalha principalmente o músculo quadríceps?",
+    "options": ["Rosca bíceps", "Agachamento", "Remada", "Supino"],
+    "correctIndex": 1
+  },
+  {
+    "id": 10,
+    "question": "O que significa 'exercício aeróbico'?",
+    "options": [
+      "Exercício feito ao ar livre",
+      "Exercício que não usa oxigênio",
+      "Exercício de curta duração e alta intensidade",
+      "Exercício que usa oxigênio como principal fonte de energia"
+    ],
+    "correctIndex": 3
+  }
+]
