@@ -1,9 +1,10 @@
 import React, { createContext, useCallback, useContext } from 'react';
 import { SessionService } from '../services/SessionService';
-import type { QuizAnswer, SpinResult } from '../types/session';
+import type { QuizAnswer, SpinResult, Registration } from '../types/session';
 
 type SessionContextType = {
   createSession: () => Promise<void>;
+  recordRegistration: (data: Registration) => Promise<void>;
   recordHomeView: () => Promise<void>;
   recordUnitsScreenView: () => Promise<void>;
   recordUnitOpened: (unitId: string, unitName: string) => Promise<void>;
@@ -22,6 +23,10 @@ const SessionContext = createContext<SessionContextType | null>(null);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const createSession = useCallback(() => SessionService.createSession().then(() => {}), []);
+  const recordRegistration = useCallback(
+    (data: Registration) => SessionService.recordRegistration(data),
+    [],
+  );
   const recordHomeView = useCallback(() => SessionService.recordHomeView(), []);
   const recordUnitsScreenView = useCallback(() => SessionService.recordUnitsScreenView(), []);
   const recordUnitOpened = useCallback(
@@ -58,6 +63,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     <SessionContext.Provider
       value={{
         createSession,
+        recordRegistration,
         recordHomeView,
         recordUnitsScreenView,
         recordUnitOpened,

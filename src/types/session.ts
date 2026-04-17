@@ -1,3 +1,11 @@
+export type Registration = {
+  name: string;
+  cpf: string;
+  email: string;
+  phone: string;
+  submittedAt: string;
+};
+
 export type QuizAnswer = {
   questionId: number;
   question: string;
@@ -17,6 +25,7 @@ export type SpinResult = {
 
 export type SessionEventType =
   | 'home_viewed'
+  | 'registration_submitted'
   | 'quiz_started'
   | 'quiz_answer'
   | 'quiz_completed'
@@ -41,6 +50,8 @@ export type Session = {
   startedAt: string;
   endedAt?: string;
   endReason?: 'completed' | 'inactivity' | 'new_session';
+
+  registration?: Registration;
 
   quiz?: {
     startedAt: string;

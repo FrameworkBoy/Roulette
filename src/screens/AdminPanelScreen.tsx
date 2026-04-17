@@ -32,6 +32,10 @@ async function exportToExcel(
     Início: s.startedAt,
     Fim: s.endedAt ?? "",
     Motivo_Fim: s.endReason ?? "",
+    Nome: s.registration?.name ?? "",
+    CPF: s.registration?.cpf ?? "",
+    Email: s.registration?.email ?? "",
+    Telefone: s.registration?.phone ?? "",
     Quiz_Nota: s.quiz ? `${s.quiz.score}/${s.quiz.total}` : "",
     Quiz_Elegível: s.quiz ? (s.quiz.eligible ? "Sim" : "Não") : "",
     Prêmio_ID: s.spin?.prizeId ?? "",
@@ -579,6 +583,13 @@ function SessionRow({ session }: { session: Session }) {
 
       {expanded && (
         <View style={styles.sessionDetail}>
+          {session.registration && (
+            <>
+              <Text style={styles.detailLine}>👤 {session.registration.name}</Text>
+              <Text style={styles.detailLine}>🪪 {session.registration.cpf}  ·  {session.registration.phone}</Text>
+              <Text style={styles.detailLine}>✉️ {session.registration.email}</Text>
+            </>
+          )}
           {session.spin && (
             <Text style={styles.detailLine}>
               🎁 Prêmio: {session.spin.prizeLabel}

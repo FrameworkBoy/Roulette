@@ -19,6 +19,9 @@ export const INACTIVITY_CONFIG: Record<string, ScreenTimeoutConfig> = {
   // User browsing unit info from the home button
   Units: { timeoutMs: 30_000, warningMs: 8_000 },
 
+  // User filling registration form
+  Register: { timeoutMs: 60_000, warningMs: 10_000 },
+
   // User stopped mid-quiz without answering
   Quiz: { timeoutMs: 30_000, warningMs: 8_000 },
 

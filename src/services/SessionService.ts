@@ -1,5 +1,5 @@
 import { storage } from './storage';
-import type { Session, SessionEvent, SessionEventType, QuizAnswer, SpinResult } from '../types/session';
+import type { Session, SessionEvent, SessionEventType, QuizAnswer, SpinResult, Registration } from '../types/session';
 
 const CURRENT_SESSION_KEY = 'current_session_id';
 const SESSION_IDS_KEY = 'session_ids';
@@ -78,6 +78,16 @@ export const SessionService = {
   },
 
   // ─── Events ────────────────────────────────────────────────────────────────
+
+  async recordRegistration(data: Registration): Promise<void> {
+    await this._appendEvent('registration_submitted', {
+      name: data.name,
+      cpf: data.cpf,
+      email: data.email,
+      phone: data.phone,
+    });
+    await this._updateSession((s) => ({ ...s, registration: data }));
+  },
 
   async recordHomeView(): Promise<void> {
     await this._appendEvent('home_viewed');

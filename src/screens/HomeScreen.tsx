@@ -42,7 +42,7 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
         <View style={styles.buttons}>
           <Pressable
             style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-            onPress={() => navigation.navigate('Quiz')}
+            onPress={() => navigation.navigate('Register')}
           >
             <Text style={styles.primaryButtonIcon}>🧠</Text>
             <Text style={styles.primaryButtonText}>Teste seus conhecimentos</Text>

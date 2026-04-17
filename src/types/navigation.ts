@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type RootStackParamList = {
   Home: undefined;
   Units: undefined;
+  Register: undefined;
   Quiz: undefined;
   Result: { score: number; total: number };
   RouletteGame: undefined;
