@@ -44,6 +44,9 @@ android/captures/
 android/.externalNativeBuild/
 android/.cxx/
 
+# Electron
+electron-dist/
+
 # Windows
 windows/packages/
 windows/*.sln.DotSettings.user

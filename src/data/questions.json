@@ -1,77 +1,167 @@
 [
   {
     "id": 1,
-    "question": "Quantas vezes por semana a OMS recomenda praticar atividade física moderada?",
-    "options": ["1 vez", "2 vezes", "3 a 5 vezes", "Todos os dias"],
+    "question": "Arnold Schwarzenegger detém o recorde de um dos mais jovens a vencer o Mr. Olympia. Com qual idade ele conquistou seu primeiro título (1970)?",
+    "options": ["19 anos", "21 anos", "23 anos", "25 anos"],
     "correctIndex": 2
   },
   {
     "id": 2,
-    "question": "Qual é a quantidade mínima de água recomendada para consumo diário de um adulto?",
-    "options": ["500ml", "1 litro", "2 litros", "4 litros"],
-    "correctIndex": 2
+    "question": "No cinema, Arnold ficou eternizado pela frase \"I'll be back\". Em qual filme ele disse isso pela primeira vez?",
+    "options": ["O Predador", "O Exterminador do Futuro", "Conan, o Bárbaro", "Comando para Matar"],
+    "correctIndex": 1
   },
   {
     "id": 3,
-    "question": "Qual nutriente é essencial para a recuperação muscular após o exercício?",
-    "options": ["Carboidrato", "Proteína", "Gordura", "Fibra"],
-    "correctIndex": 1
-  },
-  {
-    "id": 4,
-    "question": "Quantas horas de sono são recomendadas para adultos por noite?",
-    "options": ["4 a 5 horas", "6 a 7 horas", "7 a 9 horas", "10 a 12 horas"],
+    "question": "Quantas vezes, no total, Arnold Schwarzenegger venceu o Mr. Olympia?",
+    "options": ["5 vezes", "6 vezes", "7 vezes", "8 vezes"],
     "correctIndex": 2
   },
   {
-    "id": 5,
-    "question": "Qual atividade física é considerada de baixo impacto?",
-    "options": ["Corrida", "Natação", "Basquete", "Futebol"],
+    "id": 4,
+    "question": "Em qual país Arnold Schwarzenegger nasceu?",
+    "options": ["Alemanha", "Áustria", "Estados Unidos", "Suíça"],
     "correctIndex": 1
   },
   {
+    "id": 5,
+    "question": "Arnold Schwarzenegger foi eleito para qual cargo político nos Estados Unidos?",
+    "options": ["Prefeito de Los Angeles", "Senador da Flórida", "Governador da Califórnia", "Presidente dos EUA"],
+    "correctIndex": 2
+  },
+  {
     "id": 6,
-    "question": "Qual vitamina é sintetizada pelo corpo através da exposição ao sol?",
-    "options": ["Vitamina A", "Vitamina B12", "Vitamina C", "Vitamina D"],
-    "correctIndex": 3
+    "question": "Arnold era famoso por uma técnica de pose específica que enfatizava sua cintura escapular e linha de cintura. Qual era?",
+    "options": ["Most Muscular", "Front Double Biceps", "Vacuum (Vácuo abdominal)", "Side Chest"],
+    "correctIndex": 2
   },
   {
     "id": 7,
-    "question": "O que é IMC (Índice de Massa Corporal)?",
-    "options": [
-      "Medida da força muscular",
-      "Relação entre peso e altura",
-      "Nível de colesterol no sangue",
-      "Taxa de metabolismo basal"
-    ],
+    "question": "Arnold Schwarzenegger escreveu um livro considerado a \"bíblia do fisiculturismo\". Qual é o título?",
+    "options": ["Arnold: A Autobiografia", "Enciclopédia do Fisiculturismo Moderno", "Segredos do Pump", "O Caminho do Carvalho"],
     "correctIndex": 1
   },
   {
     "id": 8,
-    "question": "Qual é a principal função do alongamento antes do exercício?",
+    "question": "Qual é o apelido mais famoso de Arnold Schwarzenegger no mundo do fisiculturismo?",
+    "options": ["The King (O Rei)", "The Austrian Oak (O Carvalho Austríaco)", "Iron Arnie (Arnie de Ferro)", "The Master (O Mestre)"],
+    "correctIndex": 1
+  },
+  {
+    "id": 9,
+    "question": "O que define a \"Falha Concêntrica\" em um exercício de musculação?",
     "options": [
-      "Aumentar a massa muscular",
-      "Reduzir calorias",
-      "Preparar músculos e prevenir lesões",
-      "Aumentar a frequência cardíaca"
+      "O ponto em que o músculo não consegue mais completar a fase de encurtamento do movimento.",
+      "Quando o praticante sente dor ou queimação muscular.",
+      "O momento em que não se consegue mais segurar a carga na fase negativa.",
+      "Completar 12 repetições conforme prescrito."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 10,
+    "question": "Qual é a principal característica do \"Método de Exaustão de Arnold\" para ombros (Arnold Press)?",
+    "options": [
+      "Uso de pegada neutra durante todo o movimento.",
+      "Rotação dos punhos em 180 graus durante a fase concêntrica.",
+      "Execução apenas da fase excêntrica do movimento.",
+      "Manter os braços estendidos em isometria por 5 segundos."
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": 11,
+    "question": "Na biomecânica da musculação, o que caracteriza a fase \"Excêntrica\" de um exercício de força?",
+    "options": [
+      "A contração máxima do músculo no pico de esforço.",
+      "O momento em que a carga é vencida pela força muscular.",
+      "O alongamento das fibras musculares sob controle enquanto resistem à carga.",
+      "O período de descanso entre as séries."
     ],
     "correctIndex": 2
   },
   {
-    "id": 9,
-    "question": "Qual exercício trabalha principalmente o músculo quadríceps?",
-    "options": ["Rosca bíceps", "Agachamento", "Remada", "Supino"],
+    "id": 12,
+    "question": "O que define o princípio da \"Sobrecarga Progressiva\"?",
+    "options": [
+      "Treinar sempre com a mesma carga para manter o músculo.",
+      "Aumentar gradualmente a demanda (peso, volume ou intensidade).",
+      "Reduzir o tempo de descanso para 10 segundos entre as séries.",
+      "Trocar todos os exercícios do treino toda semana."
+    ],
     "correctIndex": 1
   },
   {
-    "id": 10,
-    "question": "O que significa 'exercício aeróbico'?",
+    "id": 13,
+    "question": "No treinamento de força, o que caracteriza a técnica de \"Rest-Pause\"?",
     "options": [
-      "Exercício feito ao ar livre",
-      "Exercício que não usa oxigênio",
-      "Exercício de curta duração e alta intensidade",
-      "Exercício que usa oxigênio como principal fonte de energia"
+      "Realizar uma série até a falha, descansar de 10 a 20 segundos e continuar por mais algumas repetições.",
+      "Descansar 5 minutos entre as séries para recuperação total da força.",
+      "Alternar dois exercícios para músculos opostos sem descanso.",
+      "Reduzir a carga em 50% após chegar à falha concêntrica."
     ],
-    "correctIndex": 3
+    "correctIndex": 0
+  },
+  {
+    "id": 14,
+    "question": "Arnold era entusiasta dos \"Stripping Sets\". Atualmente, essa técnica é amplamente conhecida como:",
+    "options": ["Super-série", "Drop-set", "Rest-pause", "Cluster set"],
+    "correctIndex": 1
+  },
+  {
+    "id": 15,
+    "question": "Em um planejamento de alta performance, o que é o \"Deload\"?",
+    "options": [
+      "Uma redução estratégica no volume ou intensidade para permitir a recuperação sistêmica.",
+      "Ficar uma semana inteira sem ir à academia.",
+      "Mudar todos os exercícios de máquinas para pesos livres.",
+      "Aumentar a carga ao máximo para testar a força máxima (1RM)."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": 16,
+    "question": "O que é a técnica de \"Pré-Exaustão\"?",
+    "options": [
+      "Fazer cardio intenso antes da musculação.",
+      "Executar um exercício isolador antes de um exercício composto para o mesmo grupo muscular.",
+      "Treinar sem carboidratos na dieta.",
+      "Realizar 100 repetições com carga leve no início do treino."
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": 17,
+    "question": "Qual destes nutrientes é a principal fonte de energia imediata para um treino de musculação intenso?",
+    "options": ["Proteínas", "Gorduras", "Carboidratos", "Vitaminas"],
+    "correctIndex": 2
+  },
+  {
+    "id": 18,
+    "question": "Qual é o grupamento muscular trabalhado principalmente no exercício \"Puxada na Frente\" (Lat Pulldown)?",
+    "options": ["Peitoral", "Dorsais (Costas)", "Bíceps Femoral", "Panturrilhas"],
+    "correctIndex": 1
+  },
+  {
+    "id": 19,
+    "question": "O termo \"Cutting\" no fisiculturismo refere-se a qual fase?",
+    "options": [
+      "Fase de ganho máximo de peso e massa bruta.",
+      "Fase de definição muscular e perda de gordura.",
+      "Fase de descanso total sem treinos.",
+      "Fase de aprendizado de novas poses."
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": 20,
+    "question": "\"Bulking\" é um termo usado para definir qual estratégia?",
+    "options": [
+      "Redução drástica de calorias.",
+      "Aumento do consumo calórico visando o ganho de massa muscular.",
+      "Treinar apenas uma vez por semana.",
+      "Praticar apenas exercícios de yoga."
+    ],
+    "correctIndex": 1
   }
 ]

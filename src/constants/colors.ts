@@ -1,18 +1,18 @@
 export const Colors = {
   // Backgrounds
-  background: '#fafafa',
-  surface: '#ffffff',
-  border: '#e2e2e4',
+  background: '#0A0A0A',
+  surface: '#1A1A1A',
+  border: '#2A2A2A',
 
-  // Brand yellow (primary CTA — matches Smart Fit buttons)
-  primary: '#ffb612',
-  primaryDark: '#eba200',
-  primaryPastel: 'rgba(255,182,18,0.12)',
+  // Brand red (primary CTA)
+  primary: '#E22725',
+  primaryDark: '#bf1f1d',
+  primaryPastel: 'rgba(226,39,37,0.12)',
 
   // Typography
-  text: 'rgba(1,1,20,0.88)',
-  textSecondary: 'rgba(1,1,20,0.48)',
-  textOnPrimary: '#000000',
+  text: 'rgba(255,255,255,0.88)',
+  textSecondary: 'rgba(255,255,255,0.48)',
+  textOnPrimary: '#ffffff',
 
   // Semantic
   success: '#25a769',

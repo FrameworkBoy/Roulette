@@ -4,6 +4,8 @@ import { INACTIVITY_CONFIG, DEFAULT_TIMEOUT } from '../config/inactivity';
 import { navigationRef } from '../navigation/navigationRef';
 import { Colors } from '../constants/colors';
 import { SessionService } from '../services/SessionService';
+import { InactivityProvider } from '../context/InactivityContext';
+import { scale, W } from '../utils/responsive';
 
 type Props = {
   children: React.ReactNode;
@@ -95,7 +97,10 @@ export default function InactivityGuard({ children }: Props) {
     };
   }, [scheduleIdle]);
 
+  const controls = { pause: clearAllTimers, resume: scheduleIdle };
+
   return (
+    <InactivityProvider value={controls}>
     <View style={styles.root} onTouchStart={handleActivity}>
       {children}
 
@@ -118,6 +123,7 @@ export default function InactivityGuard({ children }: Props) {
         </Animated.View>
       </Modal>
     </View>
+    </InactivityProvider>
   );
 }
 
@@ -130,50 +136,50 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.75)',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
+    padding: scale(32),
   },
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: 24,
+    borderRadius: scale(24),
     borderWidth: 1,
     borderColor: Colors.border,
-    paddingVertical: 48,
-    paddingHorizontal: 40,
+    paddingVertical: scale(48),
+    paddingHorizontal: scale(40),
     alignItems: 'center',
-    gap: 12,
+    gap: scale(12),
     width: '100%',
-    maxWidth: 380,
+    maxWidth: W * 0.75,
   },
   cardEmoji: {
-    fontSize: 56,
+    fontSize: scale(56),
   },
   cardTitle: {
-    fontSize: 28,
+    fontSize: scale(28),
     fontWeight: 'bold',
     color: Colors.text,
     textAlign: 'center',
   },
   cardCountdown: {
-    fontSize: 80,
+    fontSize: scale(80),
     fontWeight: 'bold',
     color: Colors.primary,
-    lineHeight: 90,
+    lineHeight: scale(90),
   },
   cardMessage: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: Colors.textSecondary,
     textAlign: 'center',
   },
   button: {
-    marginTop: 8,
+    marginTop: scale(8),
     backgroundColor: Colors.primary,
-    paddingHorizontal: 48,
-    paddingVertical: 16,
-    borderRadius: 32,
+    paddingHorizontal: scale(48),
+    paddingVertical: scale(16),
+    borderRadius: scale(32),
     shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: scale(4) },
     shadowOpacity: 0.4,
-    shadowRadius: 8,
+    shadowRadius: scale(8),
     elevation: 6,
   },
   buttonPressed: {
@@ -181,7 +187,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.text,
-    fontSize: 18,
+    fontSize: scale(18),
     fontWeight: 'bold',
     letterSpacing: 1,
   },

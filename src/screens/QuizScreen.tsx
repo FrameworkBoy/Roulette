@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import ScreenLogo from '../components/ScreenLogo';
+import { scale, W } from '../utils/responsive';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import allQuestions from '../data/questions.json';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
+import { useInactivity } from '../context/InactivityContext';
 
 type Question = {
   id: number;
@@ -23,6 +26,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
   const session = useSession();
+  const inactivity = useInactivity();
   const [questions] = useState<Question[]>(() =>
     shuffle(allQuestions as Question[]).slice(0, TOTAL),
   );
@@ -49,6 +53,7 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
   const handleSelect = useCallback(
     (index: number) => {
       if (isRevealing) return;
+      inactivity.resume();
       setSelectedOption(index);
       setIsRevealing(true);
 
@@ -101,6 +106,7 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
+        <ScreenLogo size="small" />
         <View style={styles.progressContainer}>
           <View style={styles.progressTrack}>
             <Animated.View
@@ -150,56 +156,56 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 32,
-    gap: 32,
+    paddingHorizontal: scale(24),
+    paddingTop: scale(16),
+    paddingBottom: scale(24),
+    gap: scale(16),
     width: '100%',
-    maxWidth: 640,
+    maxWidth: W * 0.9,
     alignSelf: 'center',
   },
-  progressContainer: { gap: 8 },
+  progressContainer: { gap: scale(6) },
   progressTrack: {
-    height: 6,
+    height: scale(5),
     backgroundColor: Colors.surface,
-    borderRadius: 3,
+    borderRadius: scale(3),
     overflow: 'hidden',
   },
   progressBar: {
     height: '100%',
     backgroundColor: Colors.primary,
-    borderRadius: 3,
+    borderRadius: scale(3),
   },
   progressLabel: {
     color: Colors.textSecondary,
-    fontSize: 14,
+    fontSize: scale(12),
     textAlign: 'right',
   },
-  questionContainer: { gap: 12 },
+  questionContainer: { gap: scale(8) },
   questionNumber: {
-    fontSize: 14,
+    fontSize: scale(12),
     color: Colors.primary,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1.5,
   },
   questionText: {
-    fontSize: 24,
+    fontSize: scale(20),
     fontWeight: 'bold',
     color: Colors.text,
-    lineHeight: 34,
+    lineHeight: scale(28),
   },
-  options: { gap: 12 },
+  options: { gap: scale(10) },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
-    borderRadius: 14,
+    borderRadius: scale(14),
     borderWidth: 1.5,
     borderColor: Colors.border,
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    gap: 16,
+    paddingVertical: scale(14),
+    paddingHorizontal: scale(16),
+    gap: scale(12),
   },
   optionSelected: {
     borderColor: Colors.primary,
@@ -215,18 +221,18 @@ const styles = StyleSheet.create({
   },
   optionDimmed: { opacity: 0.4 },
   optionLetter: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: scale(28),
+    height: scale(28),
+    borderRadius: scale(14),
     backgroundColor: Colors.border,
     textAlign: 'center',
-    lineHeight: 32,
-    fontSize: 14,
+    lineHeight: scale(28),
+    fontSize: scale(13),
     fontWeight: 'bold',
     color: Colors.text,
     overflow: 'hidden',
   },
-  optionText: { flex: 1, fontSize: 17, color: Colors.text },
+  optionText: { flex: 1, fontSize: scale(15), color: Colors.text },
   optionTextHighlight: { fontWeight: 'bold' },
   optionTextDimmed: { color: Colors.textSecondary },
 });

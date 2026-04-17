@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
+import ScreenLogo from '../components/ScreenLogo';
+import { scale, W } from '../utils/responsive';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
@@ -28,6 +30,7 @@ export default function PostInteractionScreen({ navigation }: ScreenProps<'PostI
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
+        <ScreenLogo size="small" />
         <View style={styles.header}>
           <Text style={styles.title}>Conheça nossas unidades</Text>
           <Text style={styles.subtitle}>
@@ -68,58 +71,61 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 40,
+    paddingHorizontal: scale(32),
+    gap: scale(40),
+    width: '100%',
+    maxWidth: W * 0.85,
+    alignSelf: 'center',
   },
   header: {
     alignItems: 'center',
-    gap: 12,
+    gap: scale(12),
   },
   title: {
-    fontSize: 36,
+    fontSize: scale(36),
     fontWeight: 'bold',
     color: Colors.text,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: scale(18),
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 26,
+    lineHeight: scale(26),
   },
   unitButtons: {
     width: '100%',
-    gap: 16,
+    gap: scale(16),
   },
   unitButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
+    gap: scale(12),
     backgroundColor: Colors.primary,
-    borderRadius: 20,
-    paddingVertical: 24,
-    paddingHorizontal: 32,
+    borderRadius: scale(20),
+    paddingVertical: scale(24),
+    paddingHorizontal: scale(32),
     shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: scale(6) },
     shadowOpacity: 0.35,
-    shadowRadius: 12,
+    shadowRadius: scale(12),
     elevation: 8,
   },
   unitButtonIcon: {
-    fontSize: 24,
+    fontSize: scale(24),
   },
   unitButtonText: {
-    fontSize: 20,
+    fontSize: scale(20),
     fontWeight: 'bold',
     color: Colors.text,
   },
   skipButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 32,
+    paddingVertical: scale(12),
+    paddingHorizontal: scale(32),
   },
   skipButtonText: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: Colors.textSecondary,
   },
   pressed: {

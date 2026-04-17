@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import ScreenLogo from '../components/ScreenLogo';
+import { scale, W } from '../utils/responsive';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
@@ -18,62 +20,39 @@ export default function ResultScreen({ route, navigation }: ScreenProps<'Result'
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.scoreCard}>
-          <Text style={styles.scoreEmoji}>{eligible ? '🎉' : '😔'}</Text>
-          <Text style={styles.scoreLabel}>Você acertou</Text>
-          <Text style={styles.scoreValue}>
-            {score}
-            <Text style={styles.scoreTotal}>/{total}</Text>
-          </Text>
-          <View style={styles.dots}>
-            {Array.from({ length: total }).map((_, i) => (
-              <View
-                key={i}
-                style={[styles.dot, i < score ? styles.dotFilled : styles.dotEmpty]}
-              />
-            ))}
+      <View style={styles.inner}>
+        <View style={styles.top}>
+          <ScreenLogo size="small" />
+          <View style={styles.scoreCircle}>
+            <Text style={styles.scoreValue}>
+              <Text style={styles.scoreNumber}>{score}</Text>
+              <Text style={styles.scoreTotal}>/{total}</Text>
+            </Text>
+            <Text style={styles.scoreLabel}>acertos!</Text>
           </View>
         </View>
 
-        {eligible ? (
-          <View style={styles.messageBlock}>
-            <Text style={styles.messageTitle}>Parabéns!</Text>
-            <Text style={styles.messageText}>
-              Você desbloqueou o direito de girar a roleta de prêmios!
-            </Text>
-          </View>
-        ) : (
-          <View style={styles.messageBlock}>
-            <Text style={styles.messageTitle}>Não foi dessa vez!</Text>
-            <Text style={styles.messageText}>
-              Você precisa acertar pelo menos {MIN_TO_WIN} perguntas para girar a roleta.
-            </Text>
-          </View>
-        )}
+        <View style={styles.messageBlock}>
+          <Text style={styles.messageTitle}>
+            {eligible ? 'Quiz finalizado' : 'Quiz finalizado.\nNão foi dessa vez!'}
+          </Text>
+          <Text style={styles.messageText}>
+            {eligible
+              ? 'Parabéns! Você atingiu a pontuação para desbloquear a roleta.'
+              : 'Obrigado por participar.\nVeja as unidades da NATION.'}
+          </Text>
+        </View>
 
-        {eligible ? (
+        <View style={styles.bottom}>
           <Pressable
             style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-            onPress={() => navigation.navigate('RouletteGame')}
+            onPress={() => navigation.navigate(eligible ? 'RouletteGame' : 'Units')}
           >
-            <Text style={styles.primaryButtonText}>🎰 Girar a Roleta!</Text>
+            <Text style={styles.primaryButtonText}>
+              {eligible ? 'Girar roleta' : 'Ver nossas unidades'}
+            </Text>
           </Pressable>
-        ) : (
-          <Pressable
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-            onPress={() => navigation.navigate('PostInteraction')}
-          >
-            <Text style={styles.primaryButtonText}>Continuar</Text>
-          </Pressable>
-        )}
-
-        <Pressable
-          style={({ pressed }) => [styles.linkButton, pressed && styles.pressed]}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <Text style={styles.linkButtonText}>Jogar novamente</Text>
-        </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -84,95 +63,81 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  content: {
+  inner: {
+    flex: 1,
+    width: '100%',
+    maxWidth: W * 0.85,
+    alignSelf: 'center',
+    paddingHorizontal: scale(32),
+  },
+  top: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 32,
+    gap: scale(40),
   },
-  scoreCard: {
-    width: '100%',
+  scoreCircle: {
+    width: scale(220),
+    height: scale(220),
+    borderRadius: scale(110),
+    borderWidth: 3,
+    borderColor: Colors.primary,
     backgroundColor: Colors.surface,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingVertical: 40,
     alignItems: 'center',
-    gap: 12,
-  },
-  scoreEmoji: {
-    fontSize: 56,
-  },
-  scoreLabel: {
-    fontSize: 18,
-    color: Colors.textSecondary,
+    justifyContent: 'center',
+    gap: scale(4),
   },
   scoreValue: {
-    fontSize: 72,
+    textAlign: 'center',
+  },
+  scoreNumber: {
+    fontSize: scale(72),
     fontWeight: 'bold',
     color: Colors.primary,
-    lineHeight: 80,
   },
   scoreTotal: {
-    fontSize: 40,
+    fontSize: scale(40),
     color: Colors.textSecondary,
   },
-  dots: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 8,
-  },
-  dot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-  },
-  dotFilled: {
-    backgroundColor: Colors.primary,
-  },
-  dotEmpty: {
-    backgroundColor: Colors.border,
+  scoreLabel: {
+    fontSize: scale(22),
+    color: Colors.textSecondary,
   },
   messageBlock: {
     alignItems: 'center',
-    gap: 8,
+    gap: scale(12),
+    paddingVertical: scale(32),
   },
   messageTitle: {
-    fontSize: 28,
+    fontSize: scale(24),
     fontWeight: 'bold',
     color: Colors.text,
     textAlign: 'center',
   },
   messageText: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: scale(24),
+  },
+  bottom: {
+    paddingBottom: scale(24),
   },
   primaryButton: {
     backgroundColor: Colors.primary,
-    paddingHorizontal: 52,
-    paddingVertical: 18,
-    borderRadius: 32,
+    paddingVertical: scale(20),
+    borderRadius: scale(50),
+    alignItems: 'center',
     shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowOffset: { width: 0, height: scale(8) },
+    shadowOpacity: 0.5,
+    shadowRadius: scale(16),
+    elevation: 10,
   },
   primaryButtonText: {
-    color: Colors.text,
-    fontSize: 20,
+    color: '#ffffff',
+    fontSize: scale(18),
     fontWeight: 'bold',
-    letterSpacing: 1,
-  },
-  linkButton: {
-    paddingVertical: 12,
-  },
-  linkButtonText: {
-    color: Colors.textSecondary,
-    fontSize: 16,
   },
   pressed: {
     opacity: 0.8,

@@ -117,20 +117,22 @@ const styles = StyleSheet.create({
   },
   pointerContainer: {
     position: 'absolute',
-    top: -14,
+    top: -36,
     zIndex: 10,
     alignItems: 'center',
+    // @ts-ignore - web only
+    filter: 'drop-shadow(0px 0px 18px white) drop-shadow(0px 0px 8px white)',
   },
   pointer: {
     width: 0,
     height: 0,
-    borderLeftWidth: 12,
-    borderRightWidth: 12,
-    borderTopWidth: 24,
+    borderLeftWidth: 36,
+    borderRightWidth: 36,
+    borderTopWidth: 64,
     borderStyle: 'solid',
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: Colors.primary,
+    borderTopColor: '#ffffff',
   },
   wheel: {
     width: WHEEL_SIZE,

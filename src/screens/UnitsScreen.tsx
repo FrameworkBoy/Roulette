@@ -1,5 +1,8 @@
-import React from 'react';
-import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { scale, W } from '../utils/responsive';
+import ScreenLogo from '../components/ScreenLogo';
+import VideoModal from '../components/VideoModal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
@@ -9,51 +12,63 @@ const UNITS = [
   {
     id: 'analia',
     name: 'Unidade Anália Franco',
-    address: 'São Paulo, SP',
-    url: 'https://example.com/analia-franco',
+    address: 'Shopping Anália Franco — R. Funchal, 400, Jd. Paulistano',
+    video: require('../assets/analia-franco.mp4'),
   },
   {
     id: 'paulista',
     name: 'Unidade Paulista',
-    address: 'São Paulo, SP',
-    url: 'https://example.com/paulista',
+    address: 'Av. Paulista, 1578 — Bela Vista, São Paulo',
+    video: require('../assets/paulista.mp4'),
   },
 ];
 
 export default function UnitsScreen({ navigation }: ScreenProps<'Units'>) {
   const session = useSession();
+  const [activeVideo, setActiveVideo] = useState<number | null>(null);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Nossas Unidades</Text>
-          <Text style={styles.subtitle}>Escolha uma unidade para conhecer</Text>
-        </View>
+      <View style={styles.inner}>
+        <ScreenLogo size="small" />
 
-        <View style={styles.cards}>
-          {UNITS.map((unit) => (
-            <Pressable
-              key={unit.id}
-              style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-              onPress={() => { session.recordUnitOpened(unit.id, unit.name); Linking.openURL(unit.url); }}
-            >
-              <Text style={styles.cardIcon}>📍</Text>
-              <Text style={styles.cardName}>{unit.name}</Text>
-              <Text style={styles.cardAddress}>{unit.address}</Text>
-              <View style={styles.cardCta}>
-                <Text style={styles.cardCtaText}>Saiba mais →</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardHeader}>Nossas unidades</Text>
+          <View style={styles.units}>
+            {UNITS.map((unit) => (
+              <View key={unit.id} style={styles.unitRow}>
+                <View style={styles.unitInfo}>
+                  <Text style={styles.unitName}>{unit.name}</Text>
+                  <Text style={styles.unitAddress}>{unit.address}</Text>
+                </View>
+                <Pressable
+                  style={({ pressed }) => [styles.videoButton, pressed && styles.pressed]}
+                  onPress={() => { session.recordUnitOpened(unit.id, unit.name); setActiveVideo(unit.video); }}
+                >
+                  <Text style={styles.videoButtonText}>Assista ao vídeo</Text>
+                </Pressable>
               </View>
-            </Pressable>
-          ))}
+            ))}
+          </View>
         </View>
 
-        <Pressable
-          style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← Voltar</Text>
-        </Pressable>
+        <View style={styles.bottom}>
+          <Pressable
+            style={({ pressed }) => [styles.skipButton, pressed && styles.pressed]}
+            onPress={() => navigation.navigate('Home')}
+          >
+            <Text style={styles.skipButtonText}>Pular e finalizar.</Text>
+          </Pressable>
+        </View>
       </View>
+
+      {activeVideo !== null && (
+        <VideoModal
+          visible
+          source={activeVideo}
+          onClose={() => setActiveVideo(null)}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -63,80 +78,87 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  content: {
+  inner: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 40,
     width: '100%',
-    maxWidth: 520,
+    maxWidth: W * 0.85,
     alignSelf: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    gap: 10,
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: Colors.text,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 18,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-  },
-  cards: {
-    width: '100%',
-    gap: 16,
+    paddingHorizontal: scale(24),
+    justifyContent: 'center',
+    gap: scale(24),
+    paddingVertical: scale(24),
   },
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingVertical: 32,
-    paddingHorizontal: 28,
-    alignItems: 'center',
-    gap: 8,
+    borderRadius: scale(20),
+    padding: scale(20),
+    gap: scale(16),
   },
-  cardIcon: {
-    fontSize: 40,
+  cardHeader: {
+    fontSize: scale(14),
+    color: Colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    fontWeight: '600',
   },
-  cardName: {
-    fontSize: 22,
+  units: {
+    gap: scale(12),
+  },
+  unitRow: {
+    backgroundColor: Colors.background,
+    borderRadius: scale(16),
+    padding: scale(20),
+    gap: scale(16),
+  },
+  unitInfo: {
+    gap: scale(4),
+  },
+  unitName: {
+    fontSize: scale(20),
     fontWeight: 'bold',
     color: Colors.text,
-    textAlign: 'center',
   },
-  cardAddress: {
-    fontSize: 15,
+  unitAddress: {
+    fontSize: scale(14),
     color: Colors.textSecondary,
+    lineHeight: scale(20),
   },
-  cardCta: {
-    marginTop: 8,
+  videoButton: {
     backgroundColor: Colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: scale(50),
+    paddingVertical: scale(14),
+    paddingHorizontal: scale(20),
+    alignItems: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: scale(4) },
+    shadowOpacity: 0.4,
+    shadowRadius: scale(8),
+    elevation: 6,
   },
-  cardCtaText: {
-    color: Colors.text,
+  videoButtonText: {
+    color: '#ffffff',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: scale(15),
   },
-  backButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+  bottom: {},
+  skipButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: scale(50),
+    paddingVertical: scale(20),
+    alignItems: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: scale(8) },
+    shadowOpacity: 0.5,
+    shadowRadius: scale(16),
+    elevation: 10,
   },
-  backButtonText: {
-    color: Colors.textSecondary,
-    fontSize: 16,
+  skipButtonText: {
+    color: '#ffffff',
+    fontSize: scale(18),
+    fontWeight: 'bold',
   },
   pressed: {
     opacity: 0.8,
-    transform: [{ scale: 0.98 }],
+    transform: [{ scale: 0.97 }],
   },
 });

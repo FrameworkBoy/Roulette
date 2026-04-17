@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../constants/colors';
-import Roulette from '../components/Roulette';
-import type { ScreenProps } from '../types/navigation';
-import { useSession } from '../context/SessionContext';
-import type { Prize } from '../config/prizes';
+import React, { useEffect, useState } from "react";
+import { View, Text, Pressable, StyleSheet, Modal } from "react-native";
+import ScreenLogo from "../components/ScreenLogo";
+import { scale, vw, W } from "../utils/responsive";
 
-export default function RouletteScreen({ navigation }: ScreenProps<'RouletteGame'>) {
-  const [done, setDone] = useState(false);
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "../constants/colors";
+import RouletteCode from "../components/RouletteCode";
+import type { ScreenProps } from "../types/navigation";
+import { useSession } from "../context/SessionContext";
+import type { Prize } from "../config/prizes";
+
+export default function RouletteScreen({
+  navigation,
+}: ScreenProps<"RouletteGame">) {
+  const [prize, setPrize] = useState<Prize | null>(null);
   const session = useSession();
 
   useEffect(() => {
@@ -18,31 +23,45 @@ export default function RouletteScreen({ navigation }: ScreenProps<'RouletteGame
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Gire a Roleta!</Text>
-          <Text style={styles.subtitle}>Você ganhou o direito de girar. Boa sorte!</Text>
-        </View>
+        <ScreenLogo size="small" />
 
-        <Roulette
-          onSpinComplete={(prize: Prize) => {
+        <RouletteCode
+          size={vw(85)}
+          onSpinComplete={(p: Prize) => {
             session.recordRouletteSpin({
-              prizeId: prize.id,
-              prizeLabel: prize.label,
+              prizeId: p.id,
+              prizeLabel: p.label,
               spunAt: new Date().toISOString(),
             });
-            setDone(true);
+            setPrize(p);
           }}
         />
-
-        {done && (
-          <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-            onPress={() => navigation.navigate('PostInteraction')}
-          >
-            <Text style={styles.buttonText}>Continuar →</Text>
-          </Pressable>
-        )}
       </View>
+
+      <Modal visible={prize !== null} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.modal}>
+            <Text style={styles.modalTitle}>Parabéns!</Text>
+            <Text style={styles.modalBody}>
+              {"Parabéns! Você ganhou\n"}
+              <Text style={styles.modalPrize}>{prize?.label}</Text>
+              {"!"}
+            </Text>
+            <Pressable
+              style={({ pressed }) => [
+                styles.modalButton,
+                pressed && styles.pressed,
+              ]}
+              onPress={() => {
+                setPrize(null);
+                navigation.navigate("Units");
+              }}
+            >
+              <Text style={styles.modalButtonText}>Ver nossas unidades</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -54,42 +73,60 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    gap: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: scale(24),
+    gap: scale(24),
   },
-  header: {
-    alignItems: 'center',
-    gap: 8,
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: scale(32),
   },
-  title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+  modal: {
+    width: "100%",
+    maxWidth: W * 0.8,
+    backgroundColor: Colors.surface,
+    borderRadius: scale(24),
+    padding: scale(36),
+    alignItems: "center",
+    gap: scale(20),
+  },
+  modalTitle: {
+    fontSize: scale(28),
+    fontWeight: "bold",
     color: Colors.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
-  subtitle: {
-    fontSize: 16,
+  modalBody: {
+    fontSize: scale(18),
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
+    lineHeight: scale(28),
   },
-  button: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 52,
-    paddingVertical: 18,
-    borderRadius: 32,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  buttonText: {
+  modalPrize: {
+    fontWeight: "bold",
     color: Colors.text,
-    fontSize: 18,
-    fontWeight: 'bold',
-    letterSpacing: 1,
+  },
+  modalButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: scale(50),
+    paddingVertical: scale(18),
+    paddingHorizontal: scale(40),
+    alignItems: "center",
+    width: "100%",
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: scale(8) },
+    shadowOpacity: 0.5,
+    shadowRadius: scale(16),
+    elevation: 10,
+  },
+  modalButtonText: {
+    color: "#ffffff",
+    fontSize: scale(18),
+    fontWeight: "bold",
   },
   pressed: {
     opacity: 0.8,

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
+import { scale, W } from '../utils/responsive';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 
@@ -33,29 +34,31 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
   return (
     <SafeAreaView style={styles.container}>
       <Pressable style={styles.secretBtn} onPress={handleSecretTap} />
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Bem-vindo!</Text>
-          <Text style={styles.subtitle}>O que você quer fazer hoje?</Text>
+
+      <View style={styles.inner}>
+        <View style={styles.top}>
+          <Image
+            source={require('../assets/nation-logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>TESTE SEUS</Text>
+          <Text style={styles.titleAccent}>CONHECIMENTOS!</Text>
         </View>
 
-        <View style={styles.buttons}>
+        <View style={styles.bottom}>
           <Pressable
             style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
             onPress={() => navigation.navigate('Register')}
           >
-            <Text style={styles.primaryButtonIcon}>🧠</Text>
-            <Text style={styles.primaryButtonText}>Teste seus conhecimentos</Text>
-            <Text style={styles.primaryButtonSub}>Responda o quiz e ganhe prêmios!</Text>
+            <Text style={styles.primaryButtonText}>Começar</Text>
           </Pressable>
 
           <Pressable
-            style={({ pressed }) => [styles.outlineButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
             onPress={() => { session.recordUnitsScreenView(); navigation.navigate('Units'); }}
           >
-            <Text style={styles.outlineButtonIcon}>📍</Text>
-            <Text style={styles.outlineButtonText}>Conheça nossas unidades</Text>
-            <Text style={styles.outlineButtonSub}>Anália Franco e Paulista</Text>
+            <Text style={styles.secondaryButtonText}>Assista aos vídeos</Text>
           </Pressable>
         </View>
       </View>
@@ -68,81 +71,66 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  content: {
+  inner: {
+    flex: 1,
+    width: '100%',
+    maxWidth: W * 0.85,
+    alignSelf: 'center',
+    paddingHorizontal: scale(32),
+  },
+  top: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 64,
-    width: '100%',
-    maxWidth: 520,
-    alignSelf: 'center',
+    gap: scale(8),
   },
-  header: {
-    alignItems: 'center',
-    gap: 12,
+  logo: {
+    width: '100%',
+    height: scale(220),
+    marginBottom: scale(24),
   },
   title: {
-    fontSize: 48,
+    fontSize: scale(36),
     fontWeight: 'bold',
     color: Colors.text,
     textAlign: 'center',
   },
-  subtitle: {
-    fontSize: 20,
-    color: Colors.textSecondary,
+  titleAccent: {
+    fontSize: scale(36),
+    fontWeight: 'bold',
+    color: Colors.primary,
     textAlign: 'center',
   },
-  buttons: {
-    width: '100%',
-    gap: 20,
+  bottom: {
+    paddingBottom: scale(24),
+    gap: scale(16),
   },
   primaryButton: {
     backgroundColor: Colors.primary,
-    borderRadius: 20,
-    paddingVertical: 28,
-    paddingHorizontal: 32,
+    borderRadius: scale(50),
+    paddingVertical: scale(20),
     alignItems: 'center',
-    gap: 6,
     shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: scale(8) },
     shadowOpacity: 0.5,
-    shadowRadius: 16,
+    shadowRadius: scale(16),
     elevation: 10,
   },
-  primaryButtonIcon: {
-    fontSize: 36,
-  },
   primaryButtonText: {
-    fontSize: 22,
+    fontSize: scale(18),
     fontWeight: 'bold',
-    color: Colors.text,
+    color: '#ffffff',
   },
-  primaryButtonSub: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-  },
-  outlineButton: {
-    borderWidth: 2,
-    borderColor: Colors.border,
+  secondaryButton: {
     backgroundColor: Colors.surface,
-    borderRadius: 20,
-    paddingVertical: 28,
-    paddingHorizontal: 32,
+    borderRadius: scale(50),
+    paddingVertical: scale(20),
     alignItems: 'center',
-    gap: 6,
   },
-  outlineButtonIcon: {
-    fontSize: 36,
-  },
-  outlineButtonText: {
-    fontSize: 22,
+  secondaryButtonText: {
+    fontSize: scale(18),
     fontWeight: 'bold',
     color: Colors.text,
-  },
-  outlineButtonSub: {
-    fontSize: 14,
-    color: Colors.textSecondary,
   },
   pressed: {
     opacity: 0.8,
@@ -152,8 +140,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
-    width: 60,
-    height: 60,
+    width: scale(60),
+    height: scale(60),
     zIndex: 99,
   },
 });
