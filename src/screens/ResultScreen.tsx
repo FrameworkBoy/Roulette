@@ -30,17 +30,16 @@ export default function ResultScreen({ route, navigation }: ScreenProps<'Result'
             </Text>
             <Text style={styles.scoreLabel}>acertos!</Text>
           </View>
-        </View>
-
-        <View style={styles.messageBlock}>
-          <Text style={styles.messageTitle}>
-            {eligible ? 'Quiz finalizado' : 'Quiz finalizado.\nNão foi dessa vez!'}
-          </Text>
-          <Text style={styles.messageText}>
-            {eligible
-              ? 'Parabéns! Você atingiu a pontuação para desbloquear a roleta.'
-              : 'Obrigado por participar.\nVeja as unidades da NATION.'}
-          </Text>
+          <View style={styles.messageBlock}>
+            <Text style={styles.messageTitle}>
+              {eligible ? 'Quiz finalizado' : 'Quiz finalizado.\nNão foi dessa vez!'}
+            </Text>
+            <Text style={styles.messageText}>
+              {eligible
+                ? 'Parabéns! Você atingiu a pontuação para desbloquear a roleta.'
+                : 'Obrigado por participar.\nVeja as unidades da NATION.'}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.bottom}>
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: scale(40),
+    gap: scale(24),
   },
   scoreCircle: {
     width: scale(220),
@@ -105,20 +104,19 @@ const styles = StyleSheet.create({
   },
   messageBlock: {
     alignItems: 'center',
-    gap: scale(12),
-    paddingVertical: scale(32),
+    gap: scale(8),
   },
   messageTitle: {
-    fontSize: scale(24),
+    fontSize: scale(28),
     fontWeight: 'bold',
     color: Colors.text,
     textAlign: 'center',
   },
   messageText: {
-    fontSize: scale(16),
+    fontSize: scale(18),
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: scale(24),
+    lineHeight: scale(26),
   },
   bottom: {
     paddingBottom: scale(24),

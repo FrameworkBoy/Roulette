@@ -4,6 +4,7 @@ import type { QuizAnswer, SpinResult, Registration } from '../types/session';
 
 type SessionContextType = {
   createSession: () => Promise<void>;
+  isCpfRegistered: (cpf: string) => Promise<boolean>;
   recordRegistration: (data: Registration) => Promise<void>;
   recordHomeView: () => Promise<void>;
   recordUnitsScreenView: () => Promise<void>;
@@ -23,6 +24,7 @@ const SessionContext = createContext<SessionContextType | null>(null);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const createSession = useCallback(() => SessionService.createSession().then(() => {}), []);
+  const isCpfRegistered = useCallback((cpf: string) => SessionService.isCpfRegistered(cpf), []);
   const recordRegistration = useCallback(
     (data: Registration) => SessionService.recordRegistration(data),
     [],
@@ -63,6 +65,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     <SessionContext.Provider
       value={{
         createSession,
+        isCpfRegistered,
         recordRegistration,
         recordHomeView,
         recordUnitsScreenView,

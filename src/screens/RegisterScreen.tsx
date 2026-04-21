@@ -27,11 +27,10 @@ function maskCPF(raw: string): string {
 }
 
 function maskPhone(raw: string): string {
-  const d = raw.replace(/\D/g, "").slice(0, 13);
-  if (d.length <= 2) return d.length ? `+${d}` : "";
-  if (d.length <= 4) return `+${d.slice(0, 2)} ${d.slice(2)}`;
-  if (d.length <= 9) return `+${d.slice(0, 2)} ${d.slice(2, 4)} ${d.slice(4)}`;
-  return `+${d.slice(0, 2)} ${d.slice(2, 4)} ${d.slice(4, 9)}-${d.slice(9)}`;
+  const d = raw.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 7) return `${d.slice(0, 2)} ${d.slice(2)}`;
+  return `${d.slice(0, 2)} ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
 // ─── Field component ──────────────────────────────────────────────────────────
@@ -121,6 +120,11 @@ export default function RegisterScreen({
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
+    if (await session.isCpfRegistered(cpf)) {
+      setErrors({ cpf: 'CPF já cadastrado' });
+      setSubmitting(false);
+      return;
+    }
     await session.recordRegistration({
       name: name.trim(),
       cpf,
@@ -181,7 +185,7 @@ export default function RegisterScreen({
               label="Telefone"
               value={phone}
               onChangeText={(v) => setPhone(maskPhone(v))}
-              placeholder="+55 11 99999-9999"
+              placeholder="11 99999-9999"
               keyboardType="phone-pad"
               error={errors.phone}
               inputRef={phoneRef}

@@ -79,6 +79,14 @@ export const SessionService = {
 
   // ─── Events ────────────────────────────────────────────────────────────────
 
+  async isCpfRegistered(cpf: string): Promise<boolean> {
+    const digits = cpf.replace(/\D/g, '');
+    const sessions = await this.getAllSessions();
+    return sessions.some(
+      (s) => s.registration && s.registration.cpf.replace(/\D/g, '') === digits,
+    );
+  },
+
   async recordRegistration(data: Registration): Promise<void> {
     await this._appendEvent('registration_submitted', {
       name: data.name,
