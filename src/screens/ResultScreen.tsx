@@ -1,15 +1,18 @@
-import React, { useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import ScreenLogo from '../components/ScreenLogo';
-import { scale, W } from '../utils/responsive';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../constants/colors';
-import type { ScreenProps } from '../types/navigation';
-import { useSession } from '../context/SessionContext';
+import React, { useEffect } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import ScreenLogo from "../components/ScreenLogo";
+import { scale, W } from "../utils/responsive";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "../constants/colors";
+import type { ScreenProps } from "../types/navigation";
+import { useSession } from "../context/SessionContext";
 
 const MIN_TO_WIN = 3;
 
-export default function ResultScreen({ route, navigation }: ScreenProps<'Result'>) {
+export default function ResultScreen({
+  route,
+  navigation,
+}: ScreenProps<"Result">) {
   const { score, total } = route.params;
   const eligible = score >= MIN_TO_WIN;
   const session = useSession();
@@ -32,23 +35,28 @@ export default function ResultScreen({ route, navigation }: ScreenProps<'Result'
           </View>
           <View style={styles.messageBlock}>
             <Text style={styles.messageTitle}>
-              {eligible ? 'Quiz finalizado' : 'Quiz finalizado.\nNão foi dessa vez!'}
+              {eligible
+                ? "Quiz finalizado"
+                : "Quiz finalizado.\nNão foi dessa vez!"}
             </Text>
             <Text style={styles.messageText}>
               {eligible
-                ? 'Parabéns! Você atingiu a pontuação para desbloquear a roleta.'
-                : 'Obrigado por participar.\nVeja as unidades da NATION.'}
+                ? "Parabéns! Você atingiu a pontuação!"
+                : "Obrigado por participar.\nVeja as unidades da NATION."}
             </Text>
           </View>
         </View>
 
         <View style={styles.bottom}>
           <Pressable
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-            onPress={() => eligible ? navigation.navigate('RouletteGame') : navigation.navigate('Units', { fromQuiz: true })}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              pressed && styles.pressed,
+            ]}
+            onPress={() => navigation.navigate("Units", { fromQuiz: true })}
           >
             <Text style={styles.primaryButtonText}>
-              {eligible ? 'Girar roleta' : 'Ver nossas unidades'}
+              {eligible ? "Conheça as nossas unidades" : "Ver nossas unidades"}
             </Text>
           </Pressable>
         </View>
@@ -64,15 +72,15 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    width: '100%',
+    width: "100%",
     maxWidth: W * 0.85,
-    alignSelf: 'center',
+    alignSelf: "center",
     paddingHorizontal: scale(32),
   },
   top: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: scale(24),
   },
   scoreCircle: {
@@ -82,16 +90,16 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: Colors.primary,
     backgroundColor: Colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: scale(4),
   },
   scoreValue: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   scoreNumber: {
     fontSize: scale(72),
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.primary,
   },
   scoreTotal: {
@@ -103,19 +111,19 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   messageBlock: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: scale(8),
   },
   messageTitle: {
     fontSize: scale(28),
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
   messageText: {
     fontSize: scale(18),
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: scale(26),
   },
   bottom: {
@@ -125,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     paddingVertical: scale(20),
     borderRadius: scale(50),
-    alignItems: 'center',
+    alignItems: "center",
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: scale(8) },
     shadowOpacity: 0.5,
@@ -133,9 +141,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   primaryButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: scale(18),
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   pressed: {
     opacity: 0.8,

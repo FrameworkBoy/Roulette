@@ -567,11 +567,11 @@ function SessionRow({ session }: { session: Session }) {
               </Text>
             </View>
           )}
-          {session.spin && (
+          {/* {session.spin && (
             <View style={styles.badgePurple}>
               <Text style={styles.badgeText}>🎰</Text>
             </View>
-          )}
+          )} */}
           {session.endReason === "inactivity" && (
             <View style={styles.badgeOrange}>
               <Text style={styles.badgeText}>⏱</Text>
@@ -590,11 +590,11 @@ function SessionRow({ session }: { session: Session }) {
               <Text style={styles.detailLine}>✉️ {session.registration.email}</Text>
             </>
           )}
-          {session.spin && (
+          {/* {session.spin && (
             <Text style={styles.detailLine}>
               🎁 Prêmio: {session.spin.prizeLabel}
             </Text>
-          )}
+          )} */}
           {session.quiz && (
             <>
               <Text style={styles.detailLine}>
@@ -692,7 +692,7 @@ export default function AdminPanelScreen({
       <View style={styles.cardRow}>
         <StatCard label="Total" value={s.total} />
         <StatCard label="Hoje" value={s.today} />
-        <StatCard label="Giraram" value={s.spun} />
+        {/* <StatCard label="Giraram" value={s.spun} /> */}
         <StatCard
           label="Inatividade"
           value={s.inactivityEnded}
@@ -727,12 +727,12 @@ export default function AdminPanelScreen({
           total={s.total}
           color={Colors.success}
         />
-        <FunnelRow
+        {/* <FunnelRow
           label="Giraram a roleta"
           count={s.spun}
           total={s.total}
           color="#F59E0B"
-        />
+        /> */}
       </View>
 
       {/* ── Quiz performance ───────────────────────── */}
@@ -753,7 +753,7 @@ export default function AdminPanelScreen({
         />
       </View>
 
-      {/* ── Prizes ─────────────────────────────────── */}
+      {/* ── Prizes (hidden while roulette flow is disabled) ──────────────
       <SectionTitle>Prêmios distribuídos</SectionTitle>
       <View style={styles.card}>
         <View style={styles.prizeHeader}>
@@ -762,16 +762,10 @@ export default function AdminPanelScreen({
         </View>
         <View style={styles.divider} />
         <View style={styles.prizeTableHeader}>
-          <Text style={[styles.prizeRowLabel, styles.prizeHeaderText]}>
-            Prêmio
-          </Text>
-          <Text style={[styles.prizeRowNum, styles.prizeHeaderText]}>
-            Dist.
-          </Text>
+          <Text style={[styles.prizeRowLabel, styles.prizeHeaderText]}>Prêmio</Text>
+          <Text style={[styles.prizeRowNum, styles.prizeHeaderText]}>Dist.</Text>
           <Text style={[styles.prizeRowPct, styles.prizeHeaderText]}>%</Text>
-          <Text style={[styles.prizeRowNum, styles.prizeHeaderText]}>
-            Estoque
-          </Text>
+          <Text style={[styles.prizeRowNum, styles.prizeHeaderText]}>Estoque</Text>
         </View>
         {s.prizeStats.map((p, i) => {
           const prizeCfg = PRIZES.find((pr) => pr.id === p.id)!;
@@ -792,6 +786,7 @@ export default function AdminPanelScreen({
 
       <SectionTitle>Regras gerais</SectionTitle>
       <GeneralRulesCard />
+      ── */}
 
       {/* ── Units ──────────────────────────────────── */}
       <SectionTitle>Cliques por unidade</SectionTitle>
@@ -832,8 +827,7 @@ export default function AdminPanelScreen({
         </View>
         <View style={styles.warningBox}>
           <Text style={styles.warningText}>
-            ⚠️ Apenas sessões que chegaram até o sorteio e coletaram um prêmio
-            são consideradas neste cálculo.
+            ⚠️ Apenas sessões finalizadas são consideradas neste cálculo.
           </Text>
         </View>
         {s.peakHour && (
