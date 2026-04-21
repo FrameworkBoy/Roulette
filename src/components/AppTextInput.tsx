@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useKeyboard } from '../context/KeyboardContext';
 import type { KeyboardMode } from '../components/AppKeyboard';
 import { Colors } from '../constants/colors';
@@ -13,11 +13,19 @@ export interface AppTextInputRef {
 export interface AppTextInputProps {
   label: string;
   value: string;
+  // Simple text fields: provide onChangeText. Append/backspace is handled automatically.
   onChangeText?: (v: string) => void;
+  // Masked fields (CPF, phone): provide onKey for full control over each keystroke.
   onKey?: (key: string) => void;
   onSubmit?: () => void;
   onFocus?: () => void;
-  onLayout?: (y: number) => void;
+  // Pass the parent ScrollView ref and the field will scroll itself into view when focused.
+  scrollRef?: React.RefObject<ScrollView | null>;
+  // Y offset of this field's container within the ScrollView (use a ref so it's always current).
+  // In the screen, add onLayout to the container View and store e.nativeEvent.layout.y here.
+  scrollContainerY?: React.RefObject<number>;
+  // Focus this field as soon as it mounts.
+  autoFocus?: boolean;
   mode?: KeyboardMode;
   placeholder?: string;
   error?: string;
@@ -40,12 +48,32 @@ function BlinkingCursor() {
 }
 
 export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
-  ({ label, value, onChangeText, onKey, onSubmit, onFocus, onLayout, mode = 'alpha', placeholder, error, returnLabel }, ref) => {
+  (
+    {
+      label,
+      value,
+      onChangeText,
+      onKey,
+      onSubmit,
+      onFocus,
+      scrollRef,
+      scrollContainerY,
+      autoFocus = false,
+      mode = 'alpha',
+      placeholder,
+      error,
+      returnLabel,
+    },
+    ref,
+  ) => {
     const keyboard = useKeyboard();
     const id = useRef(Math.random().toString(36)).current;
     const isActive = keyboard.activeId === id;
 
-    // Stable refs so closures stored in context always call the latest handlers
+    // Y of this field within its direct parent (from onLayout)
+    const ownY = useRef(0);
+
+    // Stable refs — closures stored in context always call the latest version
     const valueRef = useRef(value);
     const onKeyRef = useRef(onKey);
     const onChangeTextRef = useRef(onChangeText);
@@ -57,18 +85,26 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
     onSubmitRef.current = onSubmit;
     onFocusRef.current = onFocus;
 
+    const scrollIntoView = () => {
+      const sv = scrollRef?.current;
+      if (!sv) return;
+      const y = (scrollContainerY?.current ?? 0) + ownY.current;
+      setTimeout(() => {
+        sv.scrollTo({ y: Math.max(0, y - scale(24)), animated: true });
+      }, 50);
+    };
+
     const focus = () => {
       onFocusRef.current?.();
+      scrollIntoView();
       keyboard.show(id, {
-        mode: mode ?? 'alpha',
+        mode,
         returnLabel,
         onSubmit: () => onSubmitRef.current?.(),
         onKey: (k: string) => {
           if (onKeyRef.current) {
-            // Custom handler (e.g. masked fields)
             onKeyRef.current(k);
           } else {
-            // Default: simple append / backspace via onChangeText
             const setter = onChangeTextRef.current;
             if (!setter) return;
             if (k === 'BACKSPACE') setter(valueRef.current.slice(0, -1));
@@ -78,16 +114,20 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
       });
     };
 
-    useImperativeHandle(ref, () => ({
-      focus,
-      blur: keyboard.dismiss,
-    }));
+    useImperativeHandle(ref, () => ({ focus, blur: keyboard.dismiss }));
+
+    useEffect(() => {
+      if (autoFocus) {
+        const t = setTimeout(focus, 150);
+        return () => clearTimeout(t);
+      }
+    }, []);
 
     return (
       <Pressable
         style={styles.wrapper}
         onPress={focus}
-        onLayout={(e) => onLayout?.(e.nativeEvent.layout.y)}
+        onLayout={(e) => { ownY.current = e.nativeEvent.layout.y; }}
       >
         <Text style={styles.label}>{label}</Text>
         <View style={[styles.input, isActive && styles.inputFocused, !!error && styles.inputError]}>

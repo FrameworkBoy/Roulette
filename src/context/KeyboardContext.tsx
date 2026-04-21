@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
 import AppKeyboard, { type KeyboardMode } from '../components/AppKeyboard';
+import { useInactivity } from './InactivityContext';
 
 type KeyboardEntry = {
   onKey: (key: string) => void;
@@ -57,11 +58,13 @@ export function useKeyboard(): KeyboardContextType {
 // Drop this into any screen that needs keyboard support — renders inline so flex works correctly
 export function KeyboardArea() {
   const { activeId, mode, returnLabel, onKey, onSubmit } = useKeyboard();
+  const inactivity = useInactivity();
+
   return (
     <AppKeyboard
       visible={activeId !== null}
       mode={mode}
-      onKey={onKey}
+      onKey={(k) => { inactivity.resume(); onKey(k); }}
       onSubmit={onSubmit}
       returnLabel={returnLabel}
     />
