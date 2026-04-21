@@ -2,12 +2,15 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import AppNavigator from './src/navigation/AppNavigator';
 import { SessionProvider } from './src/context/SessionContext';
+import { KeyboardProvider } from './src/context/KeyboardContext';
 
 export default function App() {
   return (
     <SessionProvider>
-      <AppNavigator />
-      <StatusBar style="light" />
+      <KeyboardProvider>
+        <AppNavigator />
+        <StatusBar style="light" />
+      </KeyboardProvider>
     </SessionProvider>
   );
 }

@@ -1,19 +1,13 @@
 import React, { useRef, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+
 import ScreenLogo from "../components/ScreenLogo";
+import { AppTextInput, type AppTextInputRef } from "../components/AppTextInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../constants/colors";
 import { scale, W } from "../utils/responsive";
 import { useSession } from "../context/SessionContext";
+import { useKeyboard, KeyboardArea } from "../context/KeyboardContext";
 import type { ScreenProps } from "../types/navigation";
 
 // ─── Masks ────────────────────────────────────────────────────────────────────
@@ -33,63 +27,13 @@ function maskPhone(raw: string): string {
   return `${d.slice(0, 2)} ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
-// ─── Field component ──────────────────────────────────────────────────────────
-
-function Field({
-  label,
-  value,
-  onChangeText,
-  placeholder,
-  keyboardType,
-  error,
-  onSubmitEditing,
-  inputRef,
-  returnKeyType = "next",
-}: {
-  label: string;
-  value: string;
-  onChangeText: (v: string) => void;
-  placeholder: string;
-  keyboardType?: React.ComponentProps<typeof TextInput>["keyboardType"];
-  error?: string;
-  onSubmitEditing?: () => void;
-  inputRef?: React.RefObject<TextInput | null>;
-  returnKeyType?: React.ComponentProps<typeof TextInput>["returnKeyType"];
-}) {
-  const [focused, setFocused] = useState(false);
-  return (
-    <View style={styles.fieldWrapper}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      <TextInput
-        ref={inputRef}
-        style={[
-          styles.input,
-          focused && styles.inputFocused,
-          !!error && styles.inputError,
-        ]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={Colors.textSecondary}
-        keyboardType={keyboardType}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        onSubmitEditing={onSubmitEditing}
-        returnKeyType={returnKeyType}
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      {!!error && <Text style={styles.fieldError}>{error}</Text>}
-    </View>
-  );
-}
-
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function RegisterScreen({
   navigation,
 }: ScreenProps<"Register">) {
   const session = useSession();
+  const keyboard = useKeyboard();
 
   const [name, setName] = useState("");
   const [cpf, setCpf] = useState("");
@@ -100,19 +44,27 @@ export default function RegisterScreen({
   >({});
   const [submitting, setSubmitting] = useState(false);
 
-  const cpfRef = useRef<TextInput>(null);
-  const emailRef = useRef<TextInput>(null);
-  const phoneRef = useRef<TextInput>(null);
+  const scrollRef = useRef<ScrollView>(null);
+  const fieldY = useRef({ name: 0, cpf: 0, email: 0, phone: 0 });
+
+  const cpfRef = useRef<AppTextInputRef>(null);
+  const emailRef = useRef<AppTextInputRef>(null);
+  const phoneRef = useRef<AppTextInputRef>(null);
+
+  const scrollTo = (field: keyof typeof fieldY.current) => {
+    // Delay so the keyboard has time to render and reduce the viewport before we scroll
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({ y: Math.max(0, fieldY.current[field] - scale(24)), animated: true });
+    }, 50);
+  };
 
   const validate = (): boolean => {
     const e: typeof errors = {};
     if (!name.trim()) e.name = "Nome obrigatório";
-    const cpfDigits = cpf.replace(/\D/g, "");
-    if (cpfDigits.length !== 11) e.cpf = "CPF inválido";
+    if (cpf.replace(/\D/g, "").length !== 11) e.cpf = "CPF inválido";
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       e.email = "E-mail inválido";
-    const phoneDigits = phone.replace(/\D/g, "");
-    if (phoneDigits.length < 10) e.phone = "Telefone inválido";
+    if (phone.replace(/\D/g, "").length < 10) e.phone = "Telefone inválido";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -121,7 +73,7 @@ export default function RegisterScreen({
     if (!validate()) return;
     setSubmitting(true);
     if (await session.isCpfRegistered(cpf)) {
-      setErrors({ cpf: 'CPF já cadastrado' });
+      setErrors({ cpf: "CPF já cadastrado" });
       setSubmitting(false);
       return;
     }
@@ -138,77 +90,100 @@ export default function RegisterScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          contentContainerStyle={styles.scroll}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+        <View style={styles.header}>
+          <ScreenLogo size="large" />
+        </View>
+
+        <View style={styles.form}>
+          <AppTextInput
+            label="Nome completo"
+            value={name}
+            onChangeText={setName}
+            mode="alpha"
+            placeholder="Seu nome"
+            error={errors.name}
+            onLayout={(y) => { fieldY.current.name = y; }}
+            onFocus={() => scrollTo('name')}
+            onSubmit={() => cpfRef.current?.focus()}
+          />
+          <AppTextInput
+            ref={cpfRef}
+            label="CPF"
+            value={cpf}
+            onKey={(k) =>
+              setCpf((v) =>
+                k === "BACKSPACE"
+                  ? maskCPF(v.replace(/\D/g, "").slice(0, -1))
+                  : maskCPF(v + k),
+              )
+            }
+            mode="numeric"
+            placeholder="000.000.000-00"
+            error={errors.cpf}
+            onLayout={(y) => { fieldY.current.cpf = y; }}
+            onFocus={() => scrollTo('cpf')}
+            onSubmit={() => emailRef.current?.focus()}
+          />
+          <AppTextInput
+            ref={emailRef}
+            label="E-mail"
+            value={email}
+            onChangeText={setEmail}
+            mode="email"
+            placeholder="seu@email.com"
+            error={errors.email}
+            onLayout={(y) => { fieldY.current.email = y; }}
+            onFocus={() => scrollTo('email')}
+            onSubmit={() => phoneRef.current?.focus()}
+          />
+          <AppTextInput
+            ref={phoneRef}
+            label="Telefone"
+            value={phone}
+            onKey={(k) =>
+              setPhone((v) =>
+                k === "BACKSPACE"
+                  ? maskPhone(v.replace(/\D/g, "").slice(0, -1))
+                  : maskPhone(v + k),
+              )
+            }
+            mode="numeric"
+            placeholder="11 99999-9999"
+            error={errors.phone}
+            returnLabel="Pronto"
+            onLayout={(y) => { fieldY.current.phone = y; }}
+            onFocus={() => scrollTo('phone')}
+            onSubmit={() => {
+              keyboard.dismiss();
+              handleSubmit();
+            }}
+          />
+        </View>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.submitBtn,
+            pressed && { opacity: 0.85 },
+            submitting && { opacity: 0.6 },
+          ]}
+          onPress={() => {
+            keyboard.dismiss();
+            handleSubmit();
+          }}
+          disabled={submitting}
         >
-          <View style={styles.header}>
-            <ScreenLogo size="large" />
-          </View>
-
-          <View style={styles.form}>
-            <Field
-              label="Nome completo"
-              value={name}
-              onChangeText={setName}
-              placeholder="Seu nome"
-              keyboardType="default"
-              error={errors.name}
-              onSubmitEditing={() => cpfRef.current?.focus()}
-            />
-            <Field
-              label="CPF"
-              value={cpf}
-              onChangeText={(v) => setCpf(maskCPF(v))}
-              placeholder="000.000.000-00"
-              keyboardType="numeric"
-              error={errors.cpf}
-              inputRef={cpfRef}
-              onSubmitEditing={() => emailRef.current?.focus()}
-            />
-            <Field
-              label="E-mail"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="seu@email.com"
-              keyboardType="email-address"
-              error={errors.email}
-              inputRef={emailRef}
-              onSubmitEditing={() => phoneRef.current?.focus()}
-            />
-            <Field
-              label="Telefone"
-              value={phone}
-              onChangeText={(v) => setPhone(maskPhone(v))}
-              placeholder="11 99999-9999"
-              keyboardType="phone-pad"
-              error={errors.phone}
-              inputRef={phoneRef}
-              returnKeyType="done"
-              onSubmitEditing={handleSubmit}
-            />
-          </View>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.submitBtn,
-              pressed && { opacity: 0.85 },
-              submitting && { opacity: 0.6 },
-            ]}
-            onPress={handleSubmit}
-            disabled={submitting}
-          >
-            <Text style={styles.submitBtnText}>
-              {submitting ? "Salvando..." : "Continuar →"}
-            </Text>
-          </Pressable>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <Text style={styles.submitBtnText}>
+            {submitting ? "Salvando..." : "Continuar →"}
+          </Text>
+        </Pressable>
+      </ScrollView>
+      <KeyboardArea />
     </SafeAreaView>
   );
 }
@@ -218,52 +193,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  scroll: {
+  content: {
     flexGrow: 1,
     justifyContent: "center",
     paddingHorizontal: scale(32),
     paddingVertical: scale(20),
-    gap: scale(10),
+    gap: scale(24),
     maxWidth: W * 0.85,
     width: "100%",
     alignSelf: "center",
   },
   header: {
     alignItems: "center",
-    gap: scale(8),
   },
   form: {
     gap: scale(20),
-  },
-  fieldWrapper: {
-    gap: scale(6),
-  },
-  fieldLabel: {
-    fontSize: scale(13),
-    fontWeight: "600",
-    color: Colors.text,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  input: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: scale(12),
-    paddingHorizontal: scale(16),
-    paddingVertical: scale(14),
-    fontSize: scale(16),
-    color: Colors.text,
-  },
-  inputFocused: {
-    borderColor: Colors.primary,
-  },
-  inputError: {
-    borderColor: Colors.error,
-  },
-  fieldError: {
-    fontSize: scale(12),
-    color: Colors.error,
   },
   submitBtn: {
     backgroundColor: Colors.primary,
