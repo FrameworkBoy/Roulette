@@ -6,7 +6,7 @@ const path = require('path')
 const loadURL = serve({ directory: 'dist' })
 
 function log(msg) {
-  const logPath = path.join(app.getPath('userData'), 'roulette.log')
+  const logPath = path.join(app.getPath('userData'), 'lab-to-go.log')
   fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`)
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "roulette",
+  "name": "lab-to-go",
   "version": "1.0.5",
   "main": "index.ts",
   "scripts": {
@@ -43,8 +43,8 @@
     "typescript": "^6.0.2"
   },
   "build": {
-    "appId": "com.nex.roulette",
-    "productName": "Nation Quiz",
+    "appId": "com.nex.labtogo",
+    "productName": "LabToGo",
     "extraMetadata": {
       "main": "electron/main.js"
     },
@@ -66,8 +66,8 @@
   },
   "react-native-windows": {
     "init-windows": {
-      "name": "roulette",
-      "namespace": "roulette",
+      "name": "LabToGo",
+      "namespace": "LabToGo",
       "template": "cpp-app"
     }
   }
