@@ -8,6 +8,7 @@ import { scale, W } from "../utils/responsive";
 import { useSession } from "../context/SessionContext";
 import { useKeyboard, KeyboardArea } from "../context/KeyboardContext";
 import type { ScreenProps } from "../types/navigation";
+import { navigateToNextBlock } from "../navigation/flowNavigation";
 
 // ─── Masks ────────────────────────────────────────────────────────────────────
 
@@ -71,7 +72,7 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
       submittedAt: new Date().toISOString(),
     });
     setSubmitting(false);
-    navigation.navigate("Quiz");
+    navigateToNextBlock('register');
   };
 
   return (

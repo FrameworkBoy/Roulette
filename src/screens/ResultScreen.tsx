@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../constants/colors";
 import type { ScreenProps } from "../types/navigation";
 import { useSession } from "../context/SessionContext";
+import { navigateToNextBlock } from "../navigation/flowNavigation";
 
 const MIN_TO_WIN = 3;
 
@@ -53,7 +54,7 @@ export default function ResultScreen({
               styles.primaryButton,
               pressed && styles.pressed,
             ]}
-            onPress={() => navigation.navigate("Units", { fromQuiz: true })}
+            onPress={() => navigateToNextBlock('quiz', { quizScore: score })}
           >
             <Text style={styles.primaryButtonText}>
               {eligible ? "Conheça as nossas unidades" : "Ver nossas unidades"}

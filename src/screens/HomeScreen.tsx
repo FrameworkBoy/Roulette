@@ -5,6 +5,7 @@ import { Colors } from '../constants/colors';
 import { scale, W } from '../utils/responsive';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
+import { navigateToFirstBlock } from '../navigation/flowNavigation';
 
 export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
   const session = useSession();
@@ -49,7 +50,7 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
         <View style={styles.bottom}>
           <Pressable
             style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-            onPress={() => navigation.navigate('Register')}
+            onPress={() => navigateToFirstBlock()}
           >
             <Text style={styles.primaryButtonText}>Começar</Text>
           </Pressable>

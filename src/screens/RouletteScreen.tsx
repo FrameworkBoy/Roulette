@@ -8,11 +8,10 @@ import { Colors } from "../constants/colors";
 import RouletteCode from "../components/RouletteCode";
 import type { ScreenProps } from "../types/navigation";
 import { useSession } from "../context/SessionContext";
+import { navigateToNextBlock } from "../navigation/flowNavigation";
 import type { Prize } from "../config/prizes";
 
-export default function RouletteScreen({
-  navigation,
-}: ScreenProps<"RouletteGame">) {
+export default function RouletteScreen(_: ScreenProps<"RouletteGame">) {
   const [prize, setPrize] = useState<Prize | null>(null);
   const session = useSession();
 
@@ -54,7 +53,7 @@ export default function RouletteScreen({
               ]}
               onPress={() => {
                 setPrize(null);
-                navigation.navigate("Units", { fromQuiz: true });
+                navigateToNextBlock('roulette');
               }}
             >
               <Text style={styles.modalButtonText}>Ver nossas unidades</Text>
