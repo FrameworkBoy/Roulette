@@ -5,7 +5,7 @@ import { scale } from '../utils/responsive';
 export default function ScreenLogo({ size = 'small' }: { size?: 'large' | 'small' }) {
   return (
     <Image
-      source={require('../assets/nation-logo-2.png')}
+      source={require('../assets/lab-to-go.png')}
       style={size === 'large' ? styles.large : styles.small}
       resizeMode="contain"
     />

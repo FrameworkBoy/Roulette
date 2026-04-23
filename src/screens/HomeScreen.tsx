@@ -39,7 +39,7 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
       <View style={styles.inner}>
         <View style={styles.top}>
           <Image
-            source={require('../assets/nation-logo.png')}
+            source={require('../assets/lab-to-go.png')}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -57,7 +57,10 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
 
           <Pressable
             style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
-            onPress={() => { session.recordUnitsScreenView(); navigation.navigate('Units'); }}
+            onPress={() => {
+              session.recordUnitsScreenView();
+              navigation.navigate('Units');
+            }}
           >
             <Text style={styles.secondaryButtonText}>Assista aos vídeos</Text>
           </Pressable>

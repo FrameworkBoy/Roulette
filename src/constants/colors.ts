@@ -1,20 +1,21 @@
 export const Colors = {
-  // Backgrounds
-  background: '#0A0A0A',
-  surface: '#1A1A1A',
-  surfaceElevated: '#1E1E1E',
-  surfaceHighlight: '#333333',
-  border: '#2A2A2A',
+  // Backgrounds — #212121 anchors the dark canvas (NEX escuro), grays step up
+  background: '#212121',
+  surface: '#333333',
+  surfaceElevated: '#4A4A4A',
+  surfaceHighlight: '#606060',
+  border: '#4A4A4A',
 
-  // Brand red (primary CTA)
-  primary: '#E22725',
-  primaryDark: '#bf1f1d',
-  primaryPastel: 'rgba(226,39,37,0.12)',
+  // Brand purple — accent against the gray field (same role as the blue border in the brand image)
+  primary: '#A563FF',
+  primaryDark: '#7B3DFF',
+  primaryPastel: 'rgba(165,99,255,0.12)',
 
   // Typography
-  text: 'rgba(255,255,255,0.88)',
-  textSecondary: 'rgba(255,255,255,0.48)',
-  textOnPrimary: '#ffffff',
+  text: '#FFFFFF',
+  textSecondary: '#878787',  // neutral 4 — solid gray, not translucent white
+  textMuted: '#606060',      // neutral 3 — placeholder / disabled
+  textOnPrimary: '#FFFFFF',
 
   // Semantic
   success: '#25a769',
@@ -22,8 +23,8 @@ export const Colors = {
   error: '#c92c3f',
   errorPastel: 'rgba(201,44,63,0.12)',
   warning: '#F59E0B',
-  quiz: '#7C3AED',
+  quiz: '#A563FF',
   info: '#2563EB',
 
-  overlay: 'rgba(0,0,0,0.6)',
+  overlay: 'rgba(0,0,0,0.7)',
 };
