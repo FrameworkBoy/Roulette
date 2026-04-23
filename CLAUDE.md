@@ -245,16 +245,6 @@ All sizes use `scale()` from `src/utils/responsive.ts` for totem/kiosk resolutio
 
 ---
 
-## Known Issues & Cleanup
-
-See `CLEANUP.md` for a full audit with prioritised todo list. Top items:
-
-1. Rules of Hooks violation in `AppTextInput.tsx` — `useRef` inside conditional
-2. Wrong `XLSX.write` cast in `AdminPanelScreen.tsx` — runtime crash on export
-3. No-prize modal always says "Parabéns!" even for "Que pena!" prizes
-4. `MIN_TO_WIN` duplicated in `QuizScreen` and `ResultScreen`
-5. `UNITS` data duplicated with divergent shapes across two screens
-
 ---
 
 ## Git
