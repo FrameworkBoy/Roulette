@@ -7,8 +7,6 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "windows": "npx @react-native-community/cli run-windows",
-    "test:windows": "jest --config jest.config.windows.js",
     "electron:build": "expo export --platform web && electron-builder --win --x64",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "prepare": "husky"
@@ -31,12 +29,10 @@
     "react-native-screens": "^4.24.0",
     "react-native-svg": "15.12.1",
     "react-native-web": "^0.21.0",
-    "react-native-windows": "^0.81.13",
     "xlsx": "^0.18.5"
   },
   "private": true,
   "devDependencies": {
-    "@react-native-windows/cli": "^0.81.5",
     "@rnx-kit/jest-preset": "^0.1.17",
     "@types/react": "^19.2.14",
     "@types/react-native": "^0.73.0",
@@ -74,12 +70,5 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": "eslint"
-  },
-  "react-native-windows": {
-    "init-windows": {
-      "name": "LabToGo",
-      "namespace": "LabToGo",
-      "template": "cpp-app"
-    }
   }
 }
