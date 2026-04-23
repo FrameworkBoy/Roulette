@@ -1,32 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { scale, W } from "../utils/responsive";
-import ScreenLogo from "../components/ScreenLogo";
-import VideoModal from "../components/VideoModal";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "../constants/colors";
-import type { ScreenProps } from "../types/navigation";
-import { useSession } from "../context/SessionContext";
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { scale, CONTENT_MAX_WIDTH } from '../utils/responsive';
+import ScreenLogo from '../components/ScreenLogo';
+import VideoModal from '../components/VideoModal';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '../constants/colors';
+import type { ScreenProps } from '../types/navigation';
+import { useSession } from '../context/SessionContext';
+import { UNITS } from '../config/units';
 
-const UNITS = [
-  {
-    id: "analia",
-    name: "Unidade Anália Franco",
-    address: "Shopping Anália Franco — R. Funchal, 400, Jd. Paulistano",
-    video: require("../assets/analia-franco.mp4"),
-  },
-  {
-    id: "paulista",
-    name: "Unidade Paulista",
-    address: "Av. Paulista, 1578 — Bela Vista, São Paulo",
-    video: require("../assets/paulista.mp4"),
-  },
-];
-
-export default function UnitsScreen({
-  navigation,
-  route,
-}: ScreenProps<"Units">) {
+export default function UnitsScreen({ navigation, route }: ScreenProps<'Units'>) {
   const session = useSession();
   const fromQuiz = route.params?.fromQuiz ?? false;
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
@@ -46,10 +29,7 @@ export default function UnitsScreen({
                   <Text style={styles.unitAddress}>{unit.address}</Text>
                 </View>
                 <Pressable
-                  style={({ pressed }) => [
-                    styles.videoButton,
-                    pressed && styles.pressed,
-                  ]}
+                  style={({ pressed }) => [styles.videoButton, pressed && styles.pressed]}
                   onPress={() => {
                     session.recordUnitOpened(unit.id, unit.name);
                     setActiveVideo(unit.video);
@@ -64,25 +44,16 @@ export default function UnitsScreen({
 
         <View style={styles.bottom}>
           <Pressable
-            style={({ pressed }) => [
-              styles.skipButton,
-              pressed && styles.pressed,
-            ]}
-            onPress={() => navigation.navigate("Home")}
+            style={({ pressed }) => [styles.skipButton, pressed && styles.pressed]}
+            onPress={() => navigation.navigate('Home')}
           >
-            <Text style={styles.skipButtonText}>
-              {fromQuiz ? "Pular e finalizar." : "Voltar"}
-            </Text>
+            <Text style={styles.skipButtonText}>{fromQuiz ? 'Pular e finalizar.' : 'Voltar'}</Text>
           </Pressable>
         </View>
       </View>
 
       {activeVideo !== null && (
-        <VideoModal
-          visible
-          source={activeVideo}
-          onClose={() => setActiveVideo(null)}
-        />
+        <VideoModal visible source={activeVideo} onClose={() => setActiveVideo(null)} />
       )}
     </SafeAreaView>
   );
@@ -95,11 +66,11 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    width: "100%",
-    maxWidth: W * 0.85,
-    alignSelf: "center",
+    width: '100%',
+    maxWidth: CONTENT_MAX_WIDTH,
+    alignSelf: 'center',
     paddingHorizontal: scale(24),
-    justifyContent: "center",
+    justifyContent: 'center',
     gap: scale(24),
     paddingVertical: scale(24),
   },
@@ -112,9 +83,9 @@ const styles = StyleSheet.create({
   cardHeader: {
     fontSize: scale(14),
     color: Colors.textSecondary,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     letterSpacing: 1.5,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   units: {
     gap: scale(12),
@@ -130,7 +101,7 @@ const styles = StyleSheet.create({
   },
   unitName: {
     fontSize: scale(20),
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: Colors.text,
   },
   unitAddress: {
@@ -143,7 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(50),
     paddingVertical: scale(14),
     paddingHorizontal: scale(20),
-    alignItems: "center",
+    alignItems: 'center',
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: scale(4) },
     shadowOpacity: 0.4,
@@ -151,8 +122,8 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   videoButtonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
+    color: Colors.textOnPrimary,
+    fontWeight: 'bold',
     fontSize: scale(15),
   },
   bottom: {},
@@ -160,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderRadius: scale(50),
     paddingVertical: scale(20),
-    alignItems: "center",
+    alignItems: 'center',
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: scale(8) },
     shadowOpacity: 0.5,
@@ -168,9 +139,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   skipButtonText: {
-    color: "#ffffff",
+    color: Colors.textOnPrimary,
     fontSize: scale(18),
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   pressed: {
     opacity: 0.8,

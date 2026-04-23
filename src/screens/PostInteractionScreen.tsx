@@ -1,24 +1,12 @@
 import React, { useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import ScreenLogo from '../components/ScreenLogo';
-import { scale, W } from '../utils/responsive';
+import { scale, CONTENT_MAX_WIDTH } from '../utils/responsive';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
-
-const UNITS = [
-  {
-    id: 'analia',
-    label: 'Unidade Anália Franco',
-    url: 'https://example.com/analia-franco',
-  },
-  {
-    id: 'paulista',
-    label: 'Unidade Paulista',
-    url: 'https://example.com/paulista',
-  },
-];
+import { UNITS } from '../config/units';
 
 export default function PostInteractionScreen({ navigation }: ScreenProps<'PostInteraction'>) {
   const session = useSession();
@@ -43,10 +31,10 @@ export default function PostInteractionScreen({ navigation }: ScreenProps<'PostI
             <Pressable
               key={unit.id}
               style={({ pressed }) => [styles.unitButton, pressed && styles.pressed]}
-              onPress={() => { session.recordUnitOpened(unit.id, unit.label); Linking.openURL(unit.url); }}
+              onPress={() => { session.recordUnitOpened(unit.id, unit.name); Linking.openURL(unit.url); }}
             >
               <Text style={styles.unitButtonIcon}>📍</Text>
-              <Text style={styles.unitButtonText}>{unit.label}</Text>
+              <Text style={styles.unitButtonText}>{unit.name}</Text>
             </Pressable>
           ))}
         </View>
@@ -74,7 +62,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(32),
     gap: scale(40),
     width: '100%',
-    maxWidth: W * 0.85,
+    maxWidth: CONTENT_MAX_WIDTH,
     alignSelf: 'center',
   },
   header: {

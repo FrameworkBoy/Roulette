@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
-import { scale, W } from '../utils/responsive';
+import { scale, CONTENT_MAX_WIDTH } from '../utils/responsive';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { navigateToFirstBlock } from '../navigation/flowNavigation';
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   inner: {
     flex: 1,
     width: '100%',
-    maxWidth: W * 0.85,
+    maxWidth: CONTENT_MAX_WIDTH,
     alignSelf: 'center',
     paddingHorizontal: scale(32),
   },
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: scale(18),
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: Colors.textOnPrimary,
   },
   secondaryButton: {
     backgroundColor: Colors.surface,

@@ -8,6 +8,7 @@ import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { useInactivity } from '../context/InactivityContext';
+import { QUIZ_TOTAL, QUIZ_REVEAL_DELAY, QUIZ_MIN_TO_WIN } from '../config/quiz';
 
 type Question = {
   id: number;
@@ -15,10 +16,6 @@ type Question = {
   options: string[];
   correctIndex: number;
 };
-
-const TOTAL = 5;
-const REVEAL_DELAY = 900;
-const MIN_TO_WIN = 3;
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -28,7 +25,7 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
   const session = useSession();
   const inactivity = useInactivity();
   const [questions] = useState<Question[]>(() =>
-    shuffle(allQuestions as Question[]).slice(0, TOTAL),
+    shuffle(allQuestions as Question[]).slice(0, QUIZ_TOTAL),
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -44,7 +41,7 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
 
   useEffect(() => {
     Animated.timing(progressAnim, {
-      toValue: (currentIndex / TOTAL) * 100,
+      toValue: (currentIndex / QUIZ_TOTAL) * 100,
       duration: 400,
       useNativeDriver: false,
     }).start();
@@ -72,17 +69,17 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
       });
 
       setTimeout(() => {
-        if (currentIndex + 1 < TOTAL) {
+        if (currentIndex + 1 < QUIZ_TOTAL) {
           setCurrentIndex((i) => i + 1);
           setSelectedOption(null);
           setIsRevealing(false);
         } else {
           const finalScore = correct ? score + 1 : score;
-          const eligible = finalScore >= MIN_TO_WIN;
-          session.recordQuizComplete(finalScore, TOTAL, eligible);
-          navigation.replace('Result', { score: finalScore, total: TOTAL });
+          const eligible = finalScore >= QUIZ_MIN_TO_WIN;
+          session.recordQuizComplete(finalScore, QUIZ_TOTAL, eligible);
+          navigation.replace('Result', { score: finalScore, total: QUIZ_TOTAL });
         }
-      }, REVEAL_DELAY);
+      }, QUIZ_REVEAL_DELAY);
     },
     [isRevealing, current, currentIndex, score, navigation, session],
   );
@@ -122,7 +119,7 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
             />
           </View>
           <Text style={styles.progressLabel}>
-            {currentIndex + 1} / {TOTAL}
+            {currentIndex + 1} / {QUIZ_TOTAL}
           </Text>
         </View>
 

@@ -190,8 +190,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(4),
   },
   keyAction: {
-    backgroundColor: '#1E1E1E',
-    borderColor: '#333333',
+    backgroundColor: Colors.surfaceElevated,
+    borderColor: Colors.surfaceHighlight,
   },
   keyActive: {
     backgroundColor: Colors.primaryPastel,

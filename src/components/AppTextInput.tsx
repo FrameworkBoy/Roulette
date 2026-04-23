@@ -71,10 +71,9 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
     const id = useRef(Math.random().toString(36)).current;
     const isActive = keyboard.activeId === id;
 
-    // Y of this field within its direct parent (from onLayout)
     const ownY = useRef(0);
+    const nativeRef = useRef<TextInput>(null);
 
-    // Stable refs — closures stored in context always call the latest version
     const valueRef = useRef(value);
     const onKeyRef = useRef(onKey);
     const onChangeTextRef = useRef(onChangeText);
@@ -115,7 +114,11 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
       });
     };
 
-    useImperativeHandle(ref, () => ({ focus, blur: keyboard.dismiss }));
+    useImperativeHandle(ref, () =>
+      APP_CONFIG.virtualKeyboard
+        ? { focus, blur: keyboard.dismiss }
+        : { focus: () => nativeRef.current?.focus(), blur: () => nativeRef.current?.blur() },
+    );
 
     useEffect(() => {
       if (autoFocus) {
@@ -139,12 +142,6 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
           onChangeTextRef.current?.(text);
         }
       };
-
-      const nativeRef = useRef<TextInput>(null);
-      useImperativeHandle(ref, () => ({
-        focus: () => nativeRef.current?.focus(),
-        blur: () => nativeRef.current?.blur(),
-      }));
 
       return (
         <View style={styles.wrapper}>

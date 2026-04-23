@@ -1,19 +1,19 @@
-import React, { useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import ScreenLogo from "../components/ScreenLogo";
-import { AppTextInput, type AppTextInputRef } from "../components/AppTextInput";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "../constants/colors";
-import { scale, W } from "../utils/responsive";
-import { useSession } from "../context/SessionContext";
-import { useKeyboard, KeyboardArea } from "../context/KeyboardContext";
-import type { ScreenProps } from "../types/navigation";
-import { navigateToNextBlock } from "../navigation/flowNavigation";
+import React, { useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import ScreenLogo from '../components/ScreenLogo';
+import { AppTextInput, type AppTextInputRef } from '../components/AppTextInput';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '../constants/colors';
+import { scale, CONTENT_MAX_WIDTH } from '../utils/responsive';
+import { useSession } from '../context/SessionContext';
+import { useKeyboard, KeyboardArea } from '../context/KeyboardContext';
+import type { ScreenProps } from '../types/navigation';
+import { navigateToNextBlock } from '../navigation/flowNavigation';
 
 // ─── Masks ────────────────────────────────────────────────────────────────────
 
 function maskCPF(raw: string): string {
-  const d = raw.replace(/\D/g, "").slice(0, 11);
+  const d = raw.replace(/\D/g, '').slice(0, 11);
   if (d.length <= 3) return d;
   if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
   if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
@@ -21,7 +21,7 @@ function maskCPF(raw: string): string {
 }
 
 function maskPhone(raw: string): string {
-  const d = raw.replace(/\D/g, "").slice(0, 11);
+  const d = raw.replace(/\D/g, '').slice(0, 11);
   if (d.length <= 2) return d;
   if (d.length <= 7) return `${d.slice(0, 2)} ${d.slice(2)}`;
   return `${d.slice(0, 2)} ${d.slice(2, 7)}-${d.slice(7)}`;
@@ -29,15 +29,17 @@ function maskPhone(raw: string): string {
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
-export default function RegisterScreen({ navigation }: ScreenProps<"Register">) {
+export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) {
   const session = useSession();
   const keyboard = useKeyboard();
 
-  const [name, setName] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [errors, setErrors] = useState<Partial<Record<"name" | "cpf" | "email" | "phone", string>>>({});
+  const [name, setName] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [errors, setErrors] = useState<Partial<Record<'name' | 'cpf' | 'email' | 'phone', string>>>(
+    {},
+  );
   const [submitting, setSubmitting] = useState(false);
 
   const scrollRef = useRef<ScrollView>(null);
@@ -48,10 +50,11 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
 
   const validate = (): boolean => {
     const e: typeof errors = {};
-    if (!name.trim()) e.name = "Nome obrigatório";
-    if (cpf.replace(/\D/g, "").length !== 11) e.cpf = "CPF inválido";
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = "E-mail inválido";
-    if (phone.replace(/\D/g, "").length < 10) e.phone = "Telefone inválido";
+    if (!name.trim()) e.name = 'Nome obrigatório';
+    if (cpf.replace(/\D/g, '').length !== 11) e.cpf = 'CPF inválido';
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      e.email = 'E-mail inválido';
+    if (phone.replace(/\D/g, '').length < 10) e.phone = 'Telefone inválido';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -60,7 +63,7 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
     if (!validate()) return;
     setSubmitting(true);
     if (await session.isCpfRegistered(cpf)) {
-      setErrors({ cpf: "CPF já cadastrado" });
+      setErrors({ cpf: 'CPF já cadastrado' });
       setSubmitting(false);
       return;
     }
@@ -89,7 +92,9 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
 
         <View
           style={styles.form}
-          onLayout={(e) => { formContainerY.current = e.nativeEvent.layout.y; }}
+          onLayout={(e) => {
+            formContainerY.current = e.nativeEvent.layout.y;
+          }}
         >
           <AppTextInput
             label="Nome completo"
@@ -106,7 +111,11 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
             ref={cpfRef}
             label="CPF"
             value={cpf}
-            onKey={(k) => setCpf((v) => k === "BACKSPACE" ? maskCPF(v.replace(/\D/g, "").slice(0, -1)) : maskCPF(v + k))}
+            onKey={(k) =>
+              setCpf((v) =>
+                k === 'BACKSPACE' ? maskCPF(v.replace(/\D/g, '').slice(0, -1)) : maskCPF(v + k),
+              )
+            }
             mode="numeric"
             placeholder="000.000.000-00"
             error={errors.cpf}
@@ -130,14 +139,21 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
             ref={phoneRef}
             label="Telefone"
             value={phone}
-            onKey={(k) => setPhone((v) => k === "BACKSPACE" ? maskPhone(v.replace(/\D/g, "").slice(0, -1)) : maskPhone(v + k))}
+            onKey={(k) =>
+              setPhone((v) =>
+                k === 'BACKSPACE' ? maskPhone(v.replace(/\D/g, '').slice(0, -1)) : maskPhone(v + k),
+              )
+            }
             mode="numeric"
             placeholder="11 99999-9999"
             error={errors.phone}
             returnLabel="Pronto"
             scrollRef={scrollRef}
             scrollContainerY={formContainerY}
-            onSubmit={() => { keyboard.dismiss(); handleSubmit(); }}
+            onSubmit={() => {
+              keyboard.dismiss();
+              handleSubmit();
+            }}
           />
         </View>
 
@@ -147,10 +163,13 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
             pressed && { opacity: 0.85 },
             submitting && { opacity: 0.6 },
           ]}
-          onPress={() => { keyboard.dismiss(); handleSubmit(); }}
+          onPress={() => {
+            keyboard.dismiss();
+            handleSubmit();
+          }}
           disabled={submitting}
         >
-          <Text style={styles.submitBtnText}>{submitting ? "Salvando..." : "Continuar →"}</Text>
+          <Text style={styles.submitBtnText}>{submitting ? 'Salvando...' : 'Continuar →'}</Text>
         </Pressable>
       </ScrollView>
       <KeyboardArea />
@@ -165,16 +184,16 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: scale(32),
     paddingVertical: scale(20),
     gap: scale(24),
-    maxWidth: W * 0.85,
-    width: "100%",
-    alignSelf: "center",
+    maxWidth: CONTENT_MAX_WIDTH,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   form: {
     gap: scale(20),
@@ -183,7 +202,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderRadius: scale(32),
     paddingVertical: scale(18),
-    alignItems: "center",
+    alignItems: 'center',
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: scale(6) },
     shadowOpacity: 0.35,
@@ -193,7 +212,7 @@ const styles = StyleSheet.create({
   submitBtnText: {
     color: Colors.text,
     fontSize: scale(18),
-    fontWeight: "bold",
+    fontWeight: 'bold',
     letterSpacing: 1,
   },
 });

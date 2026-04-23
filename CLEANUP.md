@@ -23,44 +23,44 @@
 
 ## Todo List
 
-- [ ] **1. Fix Rules of Hooks violation in `AppTextInput.tsx`**
+- [x] **1. Fix Rules of Hooks violation in `AppTextInput.tsx`**
   Move `useRef` and `useImperativeHandle` out of the `if (!APP_CONFIG.virtualKeyboard)` conditional to the top of the component. Only the JSX should branch on the config flag.
   `src/components/AppTextInput.tsx:143`
 
-- [ ] **2. Fix wrong `XLSX.write` cast in `AdminPanelScreen.tsx`**
+- [x] **2. Fix wrong `XLSX.write` cast in `AdminPanelScreen.tsx`**
   `XLSX.write` with `type: 'array'` returns `number[]`, not `Uint8Array`. Fix with `new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' }))` or switch to `type: 'buffer'`.
   `src/screens/AdminPanelScreen.tsx:136`
 
-- [ ] **3. Fix no-prize modal in `RouletteScreen.tsx`**
+- [x] **3. Fix no-prize modal in `RouletteScreen.tsx`**
   Modal always shows "Parabéns! Você ganhou [prize]!" even when prize is "Que pena!" (no prize). Add a branch the same way `RouletteCode` handles `isNoPrize`.
   `src/screens/RouletteScreen.tsx:41-46`
 
-- [ ] **4. Extract `MIN_TO_WIN` and quiz constants to `src/config/quiz.ts`**
+- [x] **4. Extract `MIN_TO_WIN` and quiz constants to `src/config/quiz.ts`**
   `MIN_TO_WIN = 3` is declared in both `QuizScreen.tsx:21` and `ResultScreen.tsx:11`. A mismatch silently breaks eligibility. Also extract `TOTAL = 5` and `REVEAL_DELAY = 900` into the same file.
   `src/screens/QuizScreen.tsx:21`, `src/screens/ResultScreen.tsx:11`
 
-- [ ] **5. Unify `UNITS` data into a single shared source**
+- [x] **5. Unify `UNITS` data into a single shared source**
   `PostInteractionScreen.tsx` defines `{ id, label, url }` and `UnitsScreen.tsx` defines `{ id, name, address, video }` — same real-world units, divergent shapes. Extract to `src/config/units.ts` or `src/data/units.ts` and have each screen pick the fields it needs.
   `src/screens/PostInteractionScreen.tsx:10-21`, `src/screens/UnitsScreen.tsx:11-24`
 
-- [ ] **6. Remove dead files**
+- [x] **6. Remove dead files**
   Delete `src/components/Roulette.tsx`, `src/components/RouletteImage.tsx`, and `src/data/prizes.json`. None are imported anywhere. `RouletteCode.tsx` is the active component.
 
-- [ ] **7. Remove `as any` casts from `flowNavigation.ts`**
+- [x] **7. Remove `as any` casts from `flowNavigation.ts`**
   Type `BLOCK_ENTRY` as `Record<BlockId, keyof RootStackParamList>` and build a type-safe navigate call. Eliminates the three `as any` casts at lines 30, 33, 42. Also type the `'Units'` fallback as `keyof RootStackParamList`.
   `src/navigation/flowNavigation.ts:30,33,42`
 
-- [ ] **8. Fix color token inconsistencies**
+- [x] **8. Fix color token inconsistencies**
   - Replace `'#ffffff'` with `Colors.textOnPrimary` in `HomeScreen`, `ResultScreen`, `RouletteScreen`, `UnitsScreen`, `PostInteractionScreen`
   - Replace wheel segment colors `'#E22725'` / `'#1A1A1A'` in `RouletteCode.tsx` with `Colors.primary` / `Colors.surface`
   - Add `Colors.surfaceElevated` for `'#1E1E1E'`/`'#333333'` in `AppKeyboard.tsx`
   - Add `Colors.warning`, `Colors.quiz`, `Colors.info` for the magic hex strings in `AdminPanelScreen.tsx`
   - Extract `CONTENT_MAX_WIDTH = W * 0.85` and `MODAL_MAX_WIDTH = W * 0.8` into `responsive.ts` and replace the five different `W * 0.x` fractions across screens
 
-- [ ] **9. Fix quote style inconsistency**
+- [x] **9. Fix quote style inconsistency**
   Add a `.prettierrc` with `"singleQuote": true` and run Prettier across the project. `RegisterScreen`, `RouletteScreen`, `UnitsScreen`, `AdminPanelScreen`, `ResultScreen` use double quotes while all other files use single quotes.
 
-- [ ] **10. Remove unused `useRef` import in `InactivityContext.tsx`**
+- [x] **10. Remove unused `useRef` import in `InactivityContext.tsx`**
   `useRef` is imported on line 1 but never used.
   `src/context/InactivityContext.tsx:1`
 

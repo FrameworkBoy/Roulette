@@ -22,3 +22,6 @@ export const H = height;
 export const scale = (size: number) => Math.round(size * scaleRatio);
 export const vw = (pct: number) => (W * pct) / 100;
 export const vh = (pct: number) => (H * pct) / 100;
+
+export const CONTENT_MAX_WIDTH = W * 0.85;
+export const MODAL_MAX_WIDTH = W * 0.8;

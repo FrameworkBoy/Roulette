@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -8,45 +8,41 @@ import {
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as XLSX from "xlsx";
-import { Colors } from "../constants/colors";
-import { PRIZES, PRIZE_SYSTEM_CONFIG } from "../config/prizes";
-import type { Prize, DailyStock } from "../config/prizes";
-import { PrizeService } from "../services/PrizeService";
-import { SessionService } from "../services/SessionService";
-import type { Session } from "../types/session";
-import type { ScreenProps } from "../types/navigation";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import * as XLSX from 'xlsx';
+import { Colors } from '../constants/colors';
+import { PRIZES, PRIZE_SYSTEM_CONFIG } from '../config/prizes';
+import type { Prize, DailyStock } from '../config/prizes';
+import { PrizeService } from '../services/PrizeService';
+import { SessionService } from '../services/SessionService';
+import type { Session } from '../types/session';
+import type { ScreenProps } from '../types/navigation';
 
 // ─── Excel export ─────────────────────────────────────────────────────────────
 
 async function exportToExcel(
   sessions: Session[],
-  stockMap: Map<string, number | "unlimited">,
+  stockMap: Map<string, number | 'unlimited'>,
 ): Promise<void> {
   const wb = XLSX.utils.book_new();
 
   const sessionRows = sessions.map((s) => ({
     ID: s.id,
     Início: s.startedAt,
-    Fim: s.endedAt ?? "",
-    Motivo_Fim: s.endReason ?? "",
-    Nome: s.registration?.name ?? "",
-    CPF: s.registration?.cpf ?? "",
-    Email: s.registration?.email ?? "",
-    Telefone: s.registration?.phone ?? "",
-    Quiz_Nota: s.quiz ? `${s.quiz.score}/${s.quiz.total}` : "",
-    Quiz_Elegível: s.quiz ? (s.quiz.eligible ? "Sim" : "Não") : "",
-    Prêmio_ID: s.spin?.prizeId ?? "",
-    Prêmio: s.spin?.prizeLabel ?? "",
-    Prêmio_Em: s.spin?.spunAt ?? "",
+    Fim: s.endedAt ?? '',
+    Motivo_Fim: s.endReason ?? '',
+    Nome: s.registration?.name ?? '',
+    CPF: s.registration?.cpf ?? '',
+    Email: s.registration?.email ?? '',
+    Telefone: s.registration?.phone ?? '',
+    Quiz_Nota: s.quiz ? `${s.quiz.score}/${s.quiz.total}` : '',
+    Quiz_Elegível: s.quiz ? (s.quiz.eligible ? 'Sim' : 'Não') : '',
+    Prêmio_ID: s.spin?.prizeId ?? '',
+    Prêmio: s.spin?.prizeLabel ?? '',
+    Prêmio_Em: s.spin?.spunAt ?? '',
   }));
-  XLSX.utils.book_append_sheet(
-    wb,
-    XLSX.utils.json_to_sheet(sessionRows),
-    "Sessões",
-  );
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sessionRows), 'Sessões');
 
   const answerRows: Record<string, unknown>[] = [];
   for (const s of sessions) {
@@ -57,16 +53,12 @@ async function exportToExcel(
         Questão: a.question,
         Resposta: a.selectedLabel,
         Correta: a.correctLabel,
-        Acertou: a.isCorrect ? "Sim" : "Não",
+        Acertou: a.isCorrect ? 'Sim' : 'Não',
         Em: a.answeredAt,
       });
     }
   }
-  XLSX.utils.book_append_sheet(
-    wb,
-    XLSX.utils.json_to_sheet(answerRows),
-    "Respostas Quiz",
-  );
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(answerRows), 'Respostas Quiz');
 
   const eventRows: Record<string, unknown>[] = [];
   for (const s of sessions) {
@@ -75,15 +67,11 @@ async function exportToExcel(
         Sessão_ID: s.id,
         Tipo: e.type,
         Timestamp: e.timestamp,
-        Metadados: e.metadata ? JSON.stringify(e.metadata) : "",
+        Metadados: e.metadata ? JSON.stringify(e.metadata) : '',
       });
     }
   }
-  XLSX.utils.book_append_sheet(
-    wb,
-    XLSX.utils.json_to_sheet(eventRows),
-    "Eventos",
-  );
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(eventRows), 'Eventos');
 
   // Sheet 4: Prize summary with stock
   const totalSpins = sessions.filter((s) => s.spin).length;
@@ -95,8 +83,7 @@ async function exportToExcel(
     prizeCountMap.set(prizeId, { ...entry, count: entry.count + 1 });
   }
   for (const p of PRIZES) {
-    if (!prizeCountMap.has(p.id))
-      prizeCountMap.set(p.id, { label: p.label, count: 0 });
+    if (!prizeCountMap.has(p.id)) prizeCountMap.set(p.id, { label: p.label, count: 0 });
   }
   const prizeRows = [...prizeCountMap.entries()]
     .sort((a, b) => b[1].count - a[1].count)
@@ -105,48 +92,38 @@ async function exportToExcel(
       return {
         Prêmio: v.label,
         Distribuídos: v.count,
-        Percentual:
-          totalSpins > 0
-            ? `${Math.round((v.count / totalSpins) * 100)}%`
-            : "0%",
+        Percentual: totalSpins > 0 ? `${Math.round((v.count / totalSpins) * 100)}%` : '0%',
         Estoque_Restante:
-          remaining === undefined
-            ? ""
-            : remaining === "unlimited"
-              ? "Ilimitado"
-              : remaining,
+          remaining === undefined ? '' : remaining === 'unlimited' ? 'Ilimitado' : remaining,
       };
     });
-  XLSX.utils.book_append_sheet(
-    wb,
-    XLSX.utils.json_to_sheet(prizeRows),
-    "Prêmios",
-  );
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(prizeRows), 'Prêmios');
 
   const filename = `sessoes_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
-  if (Platform.OS === "web") {
+  if (Platform.OS === 'web') {
     XLSX.writeFile(wb, filename);
     return;
   }
 
-  const { File, Paths } = await import("expo-file-system");
-  const Sharing = await import("expo-sharing");
-  const bytes = XLSX.write(wb, {
-    type: "array",
-    bookType: "xlsx",
-  }) as Uint8Array;
+  const { File, Paths } = await import('expo-file-system');
+  const Sharing = await import('expo-sharing');
+  const bytes = new Uint8Array(
+    XLSX.write(wb, {
+      type: 'array',
+      bookType: 'xlsx',
+    }) as number[],
+  );
   const file = new File(Paths.cache, filename);
   file.write(bytes);
   const canShare = await Sharing.isAvailableAsync();
   if (canShare) {
     await Sharing.shareAsync(file.uri, {
-      mimeType:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      dialogTitle: "Exportar sessões",
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      dialogTitle: 'Exportar sessões',
     });
   } else {
-    Alert.alert("Arquivo salvo", file.uri);
+    Alert.alert('Arquivo salvo', file.uri);
   }
 }
 
@@ -154,9 +131,7 @@ async function exportToExcel(
 
 function computeStats(sessions: Session[]) {
   const todayStr = new Date().toISOString().slice(0, 10);
-  const todaySessions = sessions.filter((s) =>
-    s.startedAt.startsWith(todayStr),
-  );
+  const todaySessions = sessions.filter((s) => s.startedAt.startsWith(todayStr));
 
   // Funnel
   const startedQuiz = sessions.filter((s) => s.quiz).length;
@@ -181,14 +156,14 @@ function computeStats(sessions: Session[]) {
     .sort((a, b) => b.count - a.count);
   const totalPrizes = prizeStats.reduce((sum, p) => sum + p.count, 0);
   const realPrizes = prizeStats
-    .filter((p) => p.id !== "no-prize")
+    .filter((p) => p.id !== 'no-prize')
     .reduce((sum, p) => sum + p.count, 0);
 
   // Unit clicks
   const unitMap = new Map<string, { name: string; count: number }>();
   for (const s of sessions) {
     for (const e of s.events) {
-      if (e.type === "unit_opened" && e.metadata) {
+      if (e.type === 'unit_opened' && e.metadata) {
         const id = e.metadata.unitId as string;
         const name = (e.metadata.unitName ?? e.metadata.unitId) as string;
         const entry = unitMap.get(id) ?? { name, count: 0 };
@@ -204,24 +179,19 @@ function computeStats(sessions: Session[]) {
   const completedMs: number[] = [];
   for (const s of sessions) {
     if (s.spin && s.endedAt) {
-      const ms =
-        new Date(s.endedAt).getTime() - new Date(s.startedAt).getTime();
+      const ms = new Date(s.endedAt).getTime() - new Date(s.startedAt).getTime();
       if (ms > 0) completedMs.push(ms);
     }
   }
   const avgDurationMs =
-    completedMs.length > 0
-      ? completedMs.reduce((a, b) => a + b, 0) / completedMs.length
-      : null;
+    completedMs.length > 0 ? completedMs.reduce((a, b) => a + b, 0) / completedMs.length : null;
 
   // Quiz performance
   const quizScores = sessions
     .filter((s) => s.quiz?.completedAt)
     .map((s) => (s.quiz!.score / s.quiz!.total) * 100);
   const avgQuizScore =
-    quizScores.length > 0
-      ? quizScores.reduce((a, b) => a + b, 0) / quizScores.length
-      : null;
+    quizScores.length > 0 ? quizScores.reduce((a, b) => a + b, 0) / quizScores.length : null;
 
   // Peak hour
   const hourCounts: Record<number, number> = {};
@@ -230,14 +200,10 @@ function computeStats(sessions: Session[]) {
     hourCounts[h] = (hourCounts[h] ?? 0) + 1;
   }
   const peakHour =
-    sessions.length > 0
-      ? Object.entries(hourCounts).sort((a, b) => b[1] - a[1])[0]
-      : null;
+    sessions.length > 0 ? Object.entries(hourCounts).sort((a, b) => b[1] - a[1])[0] : null;
 
   // Inactivity rate
-  const inactivityEnded = sessions.filter(
-    (s) => s.endReason === "inactivity",
-  ).length;
+  const inactivityEnded = sessions.filter((s) => s.endReason === 'inactivity').length;
 
   return {
     total: sessions.length,
@@ -267,7 +233,7 @@ function fmtDuration(ms: number): string {
 }
 
 function pct(n: number, total: number): string {
-  if (total === 0) return "0%";
+  if (total === 0) return '0%';
   return `${Math.round((n / total) * 100)}%`;
 }
 
@@ -290,9 +256,7 @@ function StatCard({
 }) {
   return (
     <View style={[styles.statCard, accent && styles.statCardAccent]}>
-      <Text style={[styles.statValue, accent && styles.statValueAccent]}>
-        {value}
-      </Text>
+      <Text style={[styles.statValue, accent && styles.statValueAccent]}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
       {sub ? <Text style={styles.statSub}>{sub}</Text> : null}
     </View>
@@ -310,7 +274,7 @@ function FunnelRow({
   total: number;
   color: string;
 }) {
-  const width = total > 0 ? `${(count / total) * 100}%` : "0%";
+  const width = total > 0 ? `${(count / total) * 100}%` : '0%';
   return (
     <View style={styles.funnelRow}>
       <View style={styles.funnelLabelRow}>
@@ -321,10 +285,7 @@ function FunnelRow({
       </View>
       <View style={styles.funnelBarBg}>
         <View
-          style={[
-            styles.funnelBar,
-            { width: width as `${number}%`, backgroundColor: color },
-          ]}
+          style={[styles.funnelBar, { width: width as `${number}%`, backgroundColor: color }]}
         />
       </View>
     </View>
@@ -334,27 +295,25 @@ function FunnelRow({
 // ─── Prize rule helpers ───────────────────────────────────────────────────────
 
 const DAY_LABELS: Record<string, string> = {
-  mon: "Seg",
-  tue: "Ter",
-  wed: "Qua",
-  thu: "Qui",
-  fri: "Sex",
-  sat: "Sáb",
-  sun: "Dom",
+  mon: 'Seg',
+  tue: 'Ter',
+  wed: 'Qua',
+  thu: 'Qui',
+  fri: 'Sex',
+  sat: 'Sáb',
+  sun: 'Dom',
 };
 
 function formatStock(stock: DailyStock): string {
-  if (stock === null) return "Ilimitado";
-  if (typeof stock === "number") return `${stock} por dia`;
+  if (stock === null) return 'Ilimitado';
+  if (typeof stock === 'number') return `${stock} por dia`;
   const entries = Object.entries(stock);
-  if (entries.length === 0) return "0 por dia";
-  return entries.map(([d, v]) => `${DAY_LABELS[d] ?? d}: ${v}`).join("  ·  ");
+  if (entries.length === 0) return '0 por dia';
+  return entries.map(([d, v]) => `${DAY_LABELS[d] ?? d}: ${v}`).join('  ·  ');
 }
 
-function formatWindow(
-  w: { from: string; to: string } | null | undefined,
-): string {
-  if (!w) return "Disponível o dia todo";
+function formatWindow(w: { from: string; to: string } | null | undefined): string {
+  if (!w) return 'Disponível o dia todo';
   return `${w.from} – ${w.to}`;
 }
 
@@ -390,7 +349,7 @@ function PrizeRow({
   label: string;
   count: number;
   total: number;
-  remaining: number | "unlimited" | undefined;
+  remaining: number | 'unlimited' | undefined;
   isNoPrize: boolean;
   extraTopMargin?: boolean;
   prize: Prize;
@@ -398,59 +357,38 @@ function PrizeRow({
   const [expanded, setExpanded] = useState(false);
 
   const stockLabel =
-    remaining === undefined
-      ? "—"
-      : remaining === "unlimited"
-        ? "∞"
-        : String(remaining);
+    remaining === undefined ? '—' : remaining === 'unlimited' ? '∞' : String(remaining);
   const stockColor =
-    remaining === "unlimited" || remaining === undefined
+    remaining === 'unlimited' || remaining === undefined
       ? Colors.textSecondary
       : remaining === 0
         ? Colors.error
         : remaining <= 5
-          ? "#F59E0B"
+          ? Colors.warning
           : Colors.success;
 
   const effectivePct =
-    TOTAL_WEIGHT > 0
-      ? `~${((prize.weight / TOTAL_WEIGHT) * 100).toFixed(1)}%`
-      : "—";
+    TOTAL_WEIGHT > 0 ? `~${((prize.weight / TOTAL_WEIGHT) * 100).toFixed(1)}%` : '—';
 
   return (
-    <View
-      style={[
-        isNoPrize && styles.prizeRowNoPrize,
-        extraTopMargin && { marginTop: 8 },
-      ]}
-    >
+    <View style={[isNoPrize && styles.prizeRowNoPrize, extraTopMargin && { marginTop: 8 }]}>
       {/* ── Summary row ── */}
       <Pressable
         onPress={() => setExpanded((v) => !v)}
         style={({ pressed }) => [styles.prizeRow, pressed && { opacity: 0.7 }]}
       >
         <Text
-          style={[
-            styles.prizeRowLabel,
-            isNoPrize && { color: Colors.textSecondary },
-          ]}
+          style={[styles.prizeRowLabel, isNoPrize && { color: Colors.textSecondary }]}
           numberOfLines={1}
         >
           {label}
         </Text>
-        <Text
-          style={[
-            styles.prizeRowNum,
-            isNoPrize && { color: Colors.textSecondary },
-          ]}
-        >
+        <Text style={[styles.prizeRowNum, isNoPrize && { color: Colors.textSecondary }]}>
           {count}
         </Text>
         <Text style={styles.prizeRowPct}>{pct(count, total)}</Text>
-        <Text style={[styles.prizeRowNum, { color: stockColor }]}>
-          {stockLabel}
-        </Text>
-        <Text style={styles.prizeRowChevron}>{expanded ? "▲" : "▼"}</Text>
+        <Text style={[styles.prizeRowNum, { color: stockColor }]}>{stockLabel}</Text>
+        <Text style={styles.prizeRowChevron}>{expanded ? '▲' : '▼'}</Text>
       </Pressable>
 
       {/* ── Detail panel ── */}
@@ -471,10 +409,10 @@ function PrizeRow({
             label="Carry-over"
             value={
               prize.carryOver === undefined
-                ? "Padrão do sistema"
+                ? 'Padrão do sistema'
                 : prize.carryOver
-                  ? "Ativo"
-                  : "Inativo"
+                  ? 'Ativo'
+                  : 'Inativo'
             }
             description="Quando ativo, estoque não utilizado do dia anterior é somado ao do dia atual. Indefinido = usa a regra geral do sistema."
           />
@@ -497,19 +435,16 @@ function GeneralRulesCard() {
 
   return (
     <View style={styles.card}>
-      <Pressable
-        style={styles.generalRulesHeader}
-        onPress={() => setExpanded((v) => !v)}
-      >
+      <Pressable style={styles.generalRulesHeader} onPress={() => setExpanded((v) => !v)}>
         <Text style={styles.generalRulesTitle}>Regras gerais do sistema</Text>
-        <Text style={styles.chevron}>{expanded ? "▲" : "▼"}</Text>
+        <Text style={styles.chevron}>{expanded ? '▲' : '▼'}</Text>
       </Pressable>
       {expanded && (
         <View style={styles.generalRulesBody}>
           <View style={styles.divider} />
           <RuleItem
             label="Controle de horário"
-            value={cfg.timeWindowEnabled ? "Ativo" : "Inativo"}
+            value={cfg.timeWindowEnabled ? 'Ativo' : 'Inativo'}
             description="Interruptor geral para as janelas de horário. Quando inativo, todos os prêmios ficam disponíveis o dia todo, ignorando quaisquer janelas configuradas."
           />
           <RuleItem
@@ -519,7 +454,7 @@ function GeneralRulesCard() {
           />
           <RuleItem
             label="Carry-over global"
-            value={cfg.carryOver ? "Ativo" : "Inativo"}
+            value={cfg.carryOver ? 'Ativo' : 'Inativo'}
             description="Padrão do sistema para carry-over de estoque. Cada prêmio pode sobrescrever esta configuração individualmente via seu próprio campo carry-over."
           />
           <RuleItem
@@ -536,13 +471,10 @@ function GeneralRulesCard() {
 function SessionRow({ session }: { session: Session }) {
   const [expanded, setExpanded] = useState(false);
   const date = new Date(session.startedAt);
-  const dateStr = `${date.toLocaleDateString("pt-BR")} ${date.toLocaleTimeString(
-    "pt-BR",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  )}`;
+  const dateStr = `${date.toLocaleDateString('pt-BR')} ${date.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })}`;
 
   return (
     <Pressable
@@ -557,10 +489,7 @@ function SessionRow({ session }: { session: Session }) {
         <View style={styles.sessionRowBadges}>
           {session.quiz && (
             <View
-              style={[
-                styles.badge,
-                session.quiz.eligible ? styles.badgeGreen : styles.badgeRed,
-              ]}
+              style={[styles.badge, session.quiz.eligible ? styles.badgeGreen : styles.badgeRed]}
             >
               <Text style={styles.badgeText}>
                 {session.quiz.score}/{session.quiz.total}
@@ -572,13 +501,13 @@ function SessionRow({ session }: { session: Session }) {
               <Text style={styles.badgeText}>🎰</Text>
             </View>
           )} */}
-          {session.endReason === "inactivity" && (
+          {session.endReason === 'inactivity' && (
             <View style={styles.badgeOrange}>
               <Text style={styles.badgeText}>⏱</Text>
             </View>
           )}
         </View>
-        <Text style={styles.chevron}>{expanded ? "▲" : "▼"}</Text>
+        <Text style={styles.chevron}>{expanded ? '▲' : '▼'}</Text>
       </View>
 
       {expanded && (
@@ -586,7 +515,9 @@ function SessionRow({ session }: { session: Session }) {
           {session.registration && (
             <>
               <Text style={styles.detailLine}>👤 {session.registration.name}</Text>
-              <Text style={styles.detailLine}>🪪 {session.registration.cpf}  ·  {session.registration.phone}</Text>
+              <Text style={styles.detailLine}>
+                🪪 {session.registration.cpf} · {session.registration.phone}
+              </Text>
               <Text style={styles.detailLine}>✉️ {session.registration.email}</Text>
             </>
           )}
@@ -598,24 +529,22 @@ function SessionRow({ session }: { session: Session }) {
           {session.quiz && (
             <>
               <Text style={styles.detailLine}>
-                📝 Quiz: {session.quiz.score}/{session.quiz.total} —{" "}
-                {session.quiz.eligible ? "Elegível" : "Não elegível"}
+                📝 Quiz: {session.quiz.score}/{session.quiz.total} —{' '}
+                {session.quiz.eligible ? 'Elegível' : 'Não elegível'}
               </Text>
               {session.quiz.answers.map((a, i) => (
                 <Text key={i} style={styles.detailAnswer}>
-                  {a.isCorrect ? "✅" : "❌"} Q{a.questionId}: {a.selectedLabel}
+                  {a.isCorrect ? '✅' : '❌'} Q{a.questionId}: {a.selectedLabel}
                 </Text>
               ))}
             </>
           )}
           <Text style={styles.detailLine}>
             📋 {session.events.length} evento
-            {session.events.length !== 1 ? "s" : ""}
+            {session.events.length !== 1 ? 's' : ''}
           </Text>
           {session.endedAt && (
-            <Text style={styles.detailLine}>
-              🔚 Fim: {session.endReason ?? "completed"}
-            </Text>
+            <Text style={styles.detailLine}>🔚 Fim: {session.endReason ?? 'completed'}</Text>
           )}
         </View>
       )}
@@ -625,13 +554,9 @@ function SessionRow({ session }: { session: Session }) {
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
-export default function AdminPanelScreen({
-  navigation,
-}: ScreenProps<"AdminPanel">) {
+export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel'>) {
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [stockMap, setStockMap] = useState<Map<string, number | "unlimited">>(
-    new Map(),
-  );
+  const [stockMap, setStockMap] = useState<Map<string, number | 'unlimited'>>(new Map());
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
 
@@ -652,35 +577,31 @@ export default function AdminPanelScreen({
 
   const handleExport = async () => {
     if (sessions.length === 0) {
-      Alert.alert("Sem dados", "Nenhuma sessão registrada ainda.");
+      Alert.alert('Sem dados', 'Nenhuma sessão registrada ainda.');
       return;
     }
     setExporting(true);
     try {
       await exportToExcel(sessions, stockMap);
     } catch (e) {
-      Alert.alert("Erro", String(e));
+      Alert.alert('Erro', String(e));
     } finally {
       setExporting(false);
     }
   };
 
   const handleClear = () => {
-    Alert.alert(
-      "Limpar dados",
-      "Apagar todas as sessões? Isso não pode ser desfeito.",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Apagar",
-          style: "destructive",
-          onPress: async () => {
-            await SessionService.clearAllSessions();
-            setSessions([]);
-          },
+    Alert.alert('Limpar dados', 'Apagar todas as sessões? Isso não pode ser desfeito.', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Apagar',
+        style: 'destructive',
+        onPress: async () => {
+          await SessionService.clearAllSessions();
+          setSessions([]);
         },
-      ],
-    );
+      },
+    ]);
   };
 
   const s = computeStats(sessions);
@@ -713,13 +634,13 @@ export default function AdminPanelScreen({
           label="Iniciaram quiz"
           count={s.startedQuiz}
           total={s.total}
-          color="#7C3AED"
+          color={Colors.quiz}
         />
         <FunnelRow
           label="Completaram quiz"
           count={s.completedQuiz}
           total={s.total}
-          color="#2563EB"
+          color={Colors.info}
         />
         <FunnelRow
           label="Elegíveis (≥3 acertos)"
@@ -731,7 +652,7 @@ export default function AdminPanelScreen({
           label="Giraram a roleta"
           count={s.spun}
           total={s.total}
-          color="#F59E0B"
+          color={Colors.warning}
         /> */}
       </View>
 
@@ -740,15 +661,13 @@ export default function AdminPanelScreen({
       <View style={styles.cardRow}>
         <StatCard
           label="Taxa de aprovação"
-          value={s.completedQuiz > 0 ? pct(s.eligible, s.completedQuiz) : "—"}
+          value={s.completedQuiz > 0 ? pct(s.eligible, s.completedQuiz) : '—'}
           sub={`${s.eligible} de ${s.completedQuiz}`}
           accent
         />
         <StatCard
           label="Nota média"
-          value={
-            s.avgQuizScore !== null ? `${s.avgQuizScore.toFixed(1)}%` : "—"
-          }
+          value={s.avgQuizScore !== null ? `${s.avgQuizScore.toFixed(1)}%` : '—'}
           sub={`${s.completedQuiz} provas`}
         />
       </View>
@@ -816,12 +735,12 @@ export default function AdminPanelScreen({
       <View style={styles.card}>
         <View style={styles.durationRow}>
           <Text style={styles.durationValue}>
-            {s.avgDurationMs !== null ? fmtDuration(s.avgDurationMs) : "—"}
+            {s.avgDurationMs !== null ? fmtDuration(s.avgDurationMs) : '—'}
           </Text>
           {s.avgDurationMs !== null && (
             <Text style={styles.durationSub}>
               com base em {s.completedCount}
-              {s.completedCount !== 1 ? " Sessões" : " sessão"}
+              {s.completedCount !== 1 ? ' Sessões' : ' sessão'}
             </Text>
           )}
         </View>
@@ -833,9 +752,7 @@ export default function AdminPanelScreen({
         {s.peakHour && (
           <View style={[styles.tableRow, { marginTop: 8 }]}>
             <Text style={styles.tableCell}>🕐 Horário de pico</Text>
-            <Text style={styles.tableCellNum}>
-              {String(s.peakHour[0]).padStart(2, "0")}h
-            </Text>
+            <Text style={styles.tableCellNum}>{String(s.peakHour[0]).padStart(2, '0')}h</Text>
             <Text style={styles.tableCellPct}>{s.peakHour[1]} sessões</Text>
           </View>
         )}
@@ -880,26 +797,19 @@ export default function AdminPanelScreen({
           keyExtractor={(s) => s.id}
           renderItem={({ item }) => <SessionRow session={item} />}
           ListHeaderComponent={header}
-          ListEmptyComponent={
-            <Text style={styles.empty}>Nenhuma sessão registrada.</Text>
-          }
+          ListEmptyComponent={<Text style={styles.empty}>Nenhuma sessão registrada.</Text>}
           ListFooterComponent={
             <View style={styles.dangerZone}>
               <Text style={styles.dangerZoneTitle}>Zona de Perigo</Text>
               <Text style={styles.dangerZoneDesc}>
-                Esta ação apaga permanentemente todas as sessões registradas e
-                não pode ser desfeita.
+                Esta ação apaga permanentemente todas as sessões registradas e não pode ser
+                desfeita.
               </Text>
               <Pressable
-                style={({ pressed }) => [
-                  styles.dangerBtn,
-                  pressed && { opacity: 0.8 },
-                ]}
+                style={({ pressed }) => [styles.dangerBtn, pressed && { opacity: 0.8 }]}
                 onPress={handleClear}
               >
-                <Text style={styles.dangerBtnText}>
-                  🗑 Apagar todos os dados
-                </Text>
+                <Text style={styles.dangerBtnText}>🗑 Apagar todos os dados</Text>
               </Pressable>
             </View>
           }
@@ -916,8 +826,8 @@ export default function AdminPanelScreen({
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   topBar: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -927,9 +837,9 @@ const styles = StyleSheet.create({
   backBtnText: { color: Colors.textSecondary, fontSize: 15 },
   topBarTitle: {
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: Colors.text,
   },
   dangerZone: {
@@ -939,13 +849,13 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 16,
     gap: 10,
-    backgroundColor: "rgba(201,44,63,0.05)",
+    backgroundColor: 'rgba(201,44,63,0.05)',
   },
   dangerZoneTitle: {
     fontSize: 13,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.error,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
   dangerZoneDesc: {
@@ -959,25 +869,25 @@ const styles = StyleSheet.create({
     borderColor: Colors.error,
     borderRadius: 10,
     paddingVertical: 12,
-    alignItems: "center",
+    alignItems: 'center',
   },
-  dangerBtnText: { color: Colors.error, fontSize: 15, fontWeight: "600" },
+  dangerBtnText: { color: Colors.error, fontSize: 15, fontWeight: '600' },
 
   headerContent: { paddingBottom: 8 },
   list: { paddingHorizontal: 16, paddingBottom: 32 },
 
   sectionTitle: {
     fontSize: 13,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textSecondary,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginTop: 20,
     marginBottom: 8,
   },
 
   // Stat cards
-  cardRow: { flexDirection: "row", gap: 8 },
+  cardRow: { flexDirection: 'row', gap: 8 },
   statCard: {
     flex: 1,
     backgroundColor: Colors.surface,
@@ -986,13 +896,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     paddingVertical: 12,
     paddingHorizontal: 8,
-    alignItems: "center",
+    alignItems: 'center',
     gap: 3,
   },
   statCardAccent: { borderColor: Colors.primary },
-  statValue: { fontSize: 22, fontWeight: "bold", color: Colors.primary },
+  statValue: { fontSize: 22, fontWeight: 'bold', color: Colors.primary },
   statValueAccent: { color: Colors.primary },
-  statLabel: { fontSize: 10, color: Colors.textSecondary, textAlign: "center" },
+  statLabel: { fontSize: 10, color: Colors.textSecondary, textAlign: 'center' },
   statSub: { fontSize: 10, color: Colors.textSecondary },
 
   // Generic card wrapper
@@ -1007,41 +917,41 @@ const styles = StyleSheet.create({
 
   // Funnel
   funnelRow: { gap: 4 },
-  funnelLabelRow: { flexDirection: "row", justifyContent: "space-between" },
+  funnelLabelRow: { flexDirection: 'row', justifyContent: 'space-between' },
   funnelLabel: { fontSize: 13, color: Colors.text },
-  funnelCount: { fontSize: 13, fontWeight: "600", color: Colors.text },
+  funnelCount: { fontSize: 13, fontWeight: '600', color: Colors.text },
   funnelPct: {
     fontSize: 12,
-    fontWeight: "normal",
+    fontWeight: 'normal',
     color: Colors.textSecondary,
   },
   funnelBarBg: {
     height: 6,
     backgroundColor: Colors.border,
     borderRadius: 3,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   funnelBar: { height: 6, borderRadius: 3 },
 
   // Generic table (units, timing)
-  tableHeaderRow: { flexDirection: "row", paddingBottom: 4 },
+  tableHeaderRow: { flexDirection: 'row', paddingBottom: 4 },
   tableHeaderText: {
     color: Colors.textSecondary,
     fontSize: 11,
-    fontWeight: "600",
+    fontWeight: '600',
   },
-  tableRow: { flexDirection: "row", alignItems: "center", paddingVertical: 4 },
+  tableRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4 },
   tableCell: { flex: 1, fontSize: 13, color: Colors.text },
   tableCellNum: {
     width: 48,
-    textAlign: "right",
+    textAlign: 'right',
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.text,
   },
   tableCellPct: {
     width: 80,
-    textAlign: "right",
+    textAlign: 'right',
     fontSize: 12,
     color: Colors.textSecondary,
   },
@@ -1049,8 +959,8 @@ const styles = StyleSheet.create({
 
   // Prize table (dedicated styles for better spacing)
   prizeTableHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.background,
     borderRadius: 8,
     paddingVertical: 8,
@@ -1060,13 +970,13 @@ const styles = StyleSheet.create({
   prizeHeaderText: {
     color: Colors.textSecondary,
     fontSize: 11,
-    fontWeight: "700",
-    textTransform: "uppercase",
+    fontWeight: '700',
+    textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   prizeRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 11,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
@@ -1078,14 +988,14 @@ const styles = StyleSheet.create({
   prizeRowLabel: { flex: 1, fontSize: 13, color: Colors.text },
   prizeRowNum: {
     width: 64,
-    textAlign: "right",
+    textAlign: 'right',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.text,
   },
   prizeRowPct: {
     width: 48,
-    textAlign: "right",
+    textAlign: 'right',
     fontSize: 12,
     color: Colors.textSecondary,
   },
@@ -1106,14 +1016,14 @@ const styles = StyleSheet.create({
   },
   ruleLabel: {
     fontSize: 12,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textSecondary,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   ruleValue: {
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.primary,
   },
   ruleDesc: {
@@ -1133,13 +1043,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   prizeDetailTitle: {
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textSecondary,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     letterSpacing: 0.7,
     paddingHorizontal: 14,
     paddingTop: 10,
@@ -1148,13 +1058,13 @@ const styles = StyleSheet.create({
 
   // General rules card
   generalRulesHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   generalRulesTitle: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.text,
   },
   generalRulesBody: {
@@ -1165,26 +1075,26 @@ const styles = StyleSheet.create({
 
   // Prizes section
   prizeHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingBottom: 4,
   },
-  prizeTotalLabel: { fontSize: 14, color: Colors.text, fontWeight: "600" },
-  prizeTotalValue: { fontSize: 28, fontWeight: "bold", color: Colors.primary },
+  prizeTotalLabel: { fontSize: 14, color: Colors.text, fontWeight: '600' },
+  prizeTotalValue: { fontSize: 28, fontWeight: 'bold', color: Colors.primary },
 
   // Duration
-  durationRow: { flexDirection: "row", alignItems: "baseline", gap: 10 },
-  durationValue: { fontSize: 36, fontWeight: "bold", color: Colors.primary },
+  durationRow: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
+  durationValue: { fontSize: 36, fontWeight: 'bold', color: Colors.primary },
   durationSub: { fontSize: 13, color: Colors.textSecondary },
   warningBox: {
-    backgroundColor: "rgba(245,158,11,0.12)",
+    backgroundColor: 'rgba(245,158,11,0.12)',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(245,158,11,0.3)",
+    borderColor: 'rgba(245,158,11,0.3)',
     padding: 10,
   },
-  warningText: { fontSize: 12, color: "#F59E0B", lineHeight: 17 },
+  warningText: { fontSize: 12, color: Colors.warning, lineHeight: 17 },
 
   // Export
   exportBtn: {
@@ -1192,14 +1102,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderRadius: 12,
     paddingVertical: 14,
-    alignItems: "center",
+    alignItems: 'center',
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
     elevation: 6,
   },
-  exportBtnText: { color: Colors.text, fontSize: 16, fontWeight: "bold" },
+  exportBtnText: { color: Colors.text, fontSize: 16, fontWeight: 'bold' },
 
   // Session list
   sessionRow: {
@@ -1210,26 +1120,26 @@ const styles = StyleSheet.create({
     padding: 14,
     marginBottom: 8,
   },
-  sessionRowHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
-  sessionRowDate: { fontSize: 14, fontWeight: "600", color: Colors.text },
+  sessionRowHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  sessionRowDate: { fontSize: 14, fontWeight: '600', color: Colors.text },
   sessionRowId: { fontSize: 10, color: Colors.textSecondary, marginTop: 2 },
-  sessionRowBadges: { flexDirection: "row", gap: 4 },
+  sessionRowBadges: { flexDirection: 'row', gap: 4 },
   badge: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   badgeGreen: { backgroundColor: Colors.success },
   badgeRed: { backgroundColor: Colors.error },
   badgePurple: {
-    backgroundColor: "#7C3AED",
+    backgroundColor: Colors.quiz,
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   badgeOrange: {
-    backgroundColor: "#F59E0B",
+    backgroundColor: Colors.warning,
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  badgeText: { color: Colors.text, fontSize: 11, fontWeight: "bold" },
+  badgeText: { color: Colors.text, fontSize: 11, fontWeight: 'bold' },
   chevron: { color: Colors.textSecondary, fontSize: 12 },
   sessionDetail: {
     marginTop: 10,
@@ -1243,11 +1153,11 @@ const styles = StyleSheet.create({
   emptyCard: {
     fontSize: 13,
     color: Colors.textSecondary,
-    textAlign: "center",
+    textAlign: 'center',
     paddingVertical: 8,
   },
   empty: {
-    textAlign: "center",
+    textAlign: 'center',
     color: Colors.textSecondary,
     marginTop: 32,
     fontSize: 16,

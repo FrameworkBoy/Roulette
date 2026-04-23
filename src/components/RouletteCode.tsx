@@ -22,8 +22,8 @@ const SPIN_DURATION = 4000;
 const FULL_SPINS = 5;
 
 const DEFAULT_COLORS = [
-  '#E22725', '#1A1A1A', '#C41F1D', '#2A2A2A',
-  '#E22725', '#1A1A1A', '#C41F1D', '#2A2A2A',
+  Colors.primary, Colors.surface, Colors.primaryDark, Colors.border,
+  Colors.primary, Colors.surface, Colors.primaryDark, Colors.border,
 ];
 
 const DEFAULT_SLOTS: SlotConfig[] = PRIZES.filter(p => p.id !== PRIZE_SYSTEM_CONFIG.noPrizeId)
