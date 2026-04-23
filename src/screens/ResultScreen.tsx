@@ -8,6 +8,7 @@ import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { navigateToNextBlock } from '../navigation/flowNavigation';
 import { QUIZ_MIN_TO_WIN } from '../config/quiz';
+import { CLIENT } from '../config/client';
 
 export default function ResultScreen({ route, navigation }: ScreenProps<'Result'>) {
   const { score, total } = route.params;
@@ -37,7 +38,7 @@ export default function ResultScreen({ route, navigation }: ScreenProps<'Result'
             <Text style={styles.messageText}>
               {eligible
                 ? 'Parabéns! Você atingiu a pontuação!'
-                : 'Obrigado por participar.\nVeja as unidades da NATION.'}
+                : `Obrigado por participar.\nVeja as unidades da ${CLIENT.name}.`}
             </Text>
           </View>
         </View>

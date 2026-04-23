@@ -1,11 +1,12 @@
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { scale } from '../utils/responsive';
+import { CLIENT } from '../config/client';
 
 export default function ScreenLogo({ size = 'small' }: { size?: 'large' | 'small' }) {
   return (
     <Image
-      source={require('../assets/lab-to-go.png')}
+      source={CLIENT.logo}
       style={size === 'large' ? styles.large : styles.small}
       resizeMode="contain"
     />

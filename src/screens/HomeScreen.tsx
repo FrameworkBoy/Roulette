@@ -6,6 +6,7 @@ import { scale, CONTENT_MAX_WIDTH } from '../utils/responsive';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { navigateToFirstBlock } from '../navigation/flowNavigation';
+import { CLIENT } from '../config/client';
 
 export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
   const session = useSession();
@@ -39,12 +40,12 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
       <View style={styles.inner}>
         <View style={styles.top}>
           <Image
-            source={require('../assets/lab-to-go.png')}
+            source={CLIENT.logo}
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.title}>TESTE SEUS</Text>
-          <Text style={styles.titleAccent}>CONHECIMENTOS!</Text>
+          <Text style={styles.title}>{CLIENT.tagline.line1}</Text>
+          <Text style={styles.titleAccent}>{CLIENT.tagline.line2}</Text>
         </View>
 
         <View style={styles.bottom}>
