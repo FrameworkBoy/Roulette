@@ -1,6 +1,6 @@
 {
   "name": "roulette",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.ts",
   "scripts": {
     "start": "expo start --dev-client",
@@ -44,7 +44,7 @@
   },
   "build": {
     "appId": "com.nex.roulette",
-    "productName": "Roulette",
+    "productName": "Nation Quiz",
     "extraMetadata": {
       "main": "electron/main.js"
     },
