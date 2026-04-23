@@ -27,7 +27,7 @@ export default function RouletteScreen(_: ScreenProps<'RouletteGame'>) {
         <ScreenLogo size="small" />
 
         <RouletteCode
-          size={Math.min(vw(85), vh(60))}
+          size={Math.min(vw(75), vh(52))}
           onSpinComplete={(p: Prize) => {
             session.recordRouletteSpin({
               prizeId: p.id,

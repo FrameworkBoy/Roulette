@@ -119,12 +119,11 @@ export const PRIZES: Prize[] = [
 // "Que pena" has two segments to match the visual wheel image.
 
 export const WHEEL_SLOTS: WheelSlot[] = [
-  { prizeId: 'no-prize',          startAngle: 0,   endAngle: 45  },
-  { prizeId: 'chaveiro-nation',   startAngle: 45,  endAngle: 90  },
-  { prizeId: 'bone-total',        startAngle: 90,  endAngle: 135 },
-  { prizeId: 'coqueteleira-total',startAngle: 135, endAngle: 180 },
-  { prizeId: 'no-prize',          startAngle: 180, endAngle: 225 },
-  { prizeId: 'coqueteleira-nation',startAngle: 225, endAngle: 270 },
-  { prizeId: 'day-pass-nation',   startAngle: 270, endAngle: 315 },
-  { prizeId: 'garrafa-nation',    startAngle: 315, endAngle: 360 },
+  { prizeId: 'no-prize', startAngle: 0, endAngle: 45 },
+  { prizeId: 'chaveiro-nation', startAngle: 45, endAngle: 90 },
+  { prizeId: 'bone-total', startAngle: 90, endAngle: 135 },
+  { prizeId: 'coqueteleira-total', startAngle: 135, endAngle: 180 },
+  { prizeId: 'coqueteleira-nation', startAngle: 225, endAngle: 270 },
+  { prizeId: 'day-pass-nation', startAngle: 270, endAngle: 315 },
+  { prizeId: 'garrafa-nation', startAngle: 315, endAngle: 360 },
 ];

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path, G, Text as SvgText } from 'react-native-svg';
-import { PRIZES, PRIZE_SYSTEM_CONFIG } from '../config/prizes';
+import { PRIZES, PRIZE_SYSTEM_CONFIG, WHEEL_SLOTS } from '../config/prizes';
 import type { Prize } from '../config/prizes';
 import { PrizeService } from '../services/PrizeService';
 import { Colors } from '../constants/colors';
@@ -32,12 +32,10 @@ const DEFAULT_COLORS = [
   Colors.border,
 ];
 
-const DEFAULT_SLOTS: SlotConfig[] = PRIZES.filter((p) => p.id !== PRIZE_SYSTEM_CONFIG.noPrizeId)
-  .concat(PRIZES.filter((p) => p.id === PRIZE_SYSTEM_CONFIG.noPrizeId))
-  .map((prize, i) => ({
-    prize,
-    color: DEFAULT_COLORS[i % DEFAULT_COLORS.length],
-  }));
+const DEFAULT_SLOTS: SlotConfig[] = WHEEL_SLOTS.map((slot, i) => ({
+  prize: PRIZES.find((p) => p.id === slot.prizeId)!,
+  color: DEFAULT_COLORS[i % DEFAULT_COLORS.length],
+}));
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const rad = ((angleDeg - 90) * Math.PI) / 180;
@@ -120,13 +118,16 @@ export default function RouletteCode({ slots = DEFAULT_SLOTS, size = 300, onSpin
                 const startAngle = i * segmentAngle;
                 const endAngle = startAngle + segmentAngle;
                 const midAngle = startAngle + segmentAngle / 2;
-                const labelR = r * 0.65;
+                const labelR = r * 0.52;
                 const labelPos = polarToCartesian(cx, cy, labelR, midAngle);
-                const maxChars = 12;
-                const label =
-                  slot.prize.label.length > maxChars
-                    ? slot.prize.label.slice(0, maxChars - 1) + '…'
-                    : slot.prize.label;
+                const baseFontSize = size * 0.038;
+                // radial space available from center circle (r=20) to outer rim
+                const maxTextWidth = 2 * (labelR - 20);
+                // bold char ≈ 0.6× font size; scale down if label is too long
+                const fontSize = Math.min(
+                  baseFontSize,
+                  maxTextWidth / (slot.prize.label.length * 0.6),
+                );
 
                 return (
                   <G key={slot.prize.id + i}>
@@ -140,14 +141,14 @@ export default function RouletteCode({ slots = DEFAULT_SLOTS, size = 300, onSpin
                       x={labelPos.x}
                       y={labelPos.y}
                       fill="#ffffff"
-                      fontSize={size * 0.038}
+                      fontSize={fontSize}
                       fontWeight="bold"
                       textAnchor="middle"
                       alignmentBaseline="middle"
                       rotation={midAngle - 90}
                       origin={`${labelPos.x}, ${labelPos.y}`}
                     >
-                      {label}
+                      {slot.prize.label}
                     </SvgText>
                   </G>
                 );
