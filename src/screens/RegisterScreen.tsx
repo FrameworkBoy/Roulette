@@ -9,52 +9,33 @@ import { useSession } from '../context/SessionContext';
 import { useKeyboard, KeyboardArea } from '../context/KeyboardContext';
 import type { ScreenProps } from '../types/navigation';
 import { navigateToNextBlock } from '../navigation/flowNavigation';
-
-// ─── Masks ────────────────────────────────────────────────────────────────────
-
-function maskCPF(raw: string): string {
-  const d = raw.replace(/\D/g, '').slice(0, 11);
-  if (d.length <= 3) return d;
-  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
-  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
-  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9, 11)}`;
-}
-
-function maskPhone(raw: string): string {
-  const d = raw.replace(/\D/g, '').slice(0, 11);
-  if (d.length <= 2) return d;
-  if (d.length <= 7) return `${d.slice(0, 2)} ${d.slice(2)}`;
-  return `${d.slice(0, 2)} ${d.slice(2, 7)}-${d.slice(7)}`;
-}
-
-// ─── Screen ───────────────────────────────────────────────────────────────────
+import { REGISTRATION_FIELDS, MASKS } from '../config/registration';
 
 export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) {
   const session = useSession();
   const keyboard = useKeyboard();
 
-  const [name, setName] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [errors, setErrors] = useState<Partial<Record<'name' | 'cpf' | 'email' | 'phone', string>>>(
-    {},
+  const [values, setValues] = useState<Record<string, string>>(
+    Object.fromEntries(REGISTRATION_FIELDS.map((f) => [f.id, ''])),
   );
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
   const scrollRef = useRef<ScrollView>(null);
   const formContainerY = useRef(0);
-  const cpfRef = useRef<AppTextInputRef>(null);
-  const emailRef = useRef<AppTextInputRef>(null);
-  const phoneRef = useRef<AppTextInputRef>(null);
+  const fieldRefs = useRef<Record<string, AppTextInputRef | null>>(
+    Object.fromEntries(REGISTRATION_FIELDS.map((f) => [f.id, null])),
+  );
+
+  const setValue = (id: string, value: string) =>
+    setValues((prev) => ({ ...prev, [id]: value }));
 
   const validate = (): boolean => {
-    const e: typeof errors = {};
-    if (!name.trim()) e.name = 'Nome obrigatório';
-    if (cpf.replace(/\D/g, '').length !== 11) e.cpf = 'CPF inválido';
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
-      e.email = 'E-mail inválido';
-    if (phone.replace(/\D/g, '').length < 10) e.phone = 'Telefone inválido';
+    const e: Record<string, string> = {};
+    for (const field of REGISTRATION_FIELDS) {
+      const error = field.validate?.(values[field.id] ?? '');
+      if (error) e[field.id] = error;
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -62,18 +43,24 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
-    if (await session.isCpfRegistered(cpf)) {
-      setErrors({ cpf: 'CPF já cadastrado' });
+
+    if (await session.isDuplicateRegistered(values)) {
+      const uniqueField = REGISTRATION_FIELDS.find((f) => f.unique);
+      if (uniqueField) setErrors({ [uniqueField.id]: `${uniqueField.label} já cadastrado` });
       setSubmitting(false);
       return;
     }
-    await session.recordRegistration({
-      name: name.trim(),
-      cpf,
-      email: email.trim().toLowerCase(),
-      phone,
-      submittedAt: new Date().toISOString(),
-    });
+
+    const normalizedFields = Object.fromEntries(
+      REGISTRATION_FIELDS.map((f) => [
+        f.id,
+        f.mode === 'email'
+          ? (values[f.id] ?? '').trim().toLowerCase()
+          : (values[f.id] ?? '').trim(),
+      ]),
+    );
+
+    await session.recordRegistration({ fields: normalizedFields, submittedAt: new Date().toISOString() });
     setSubmitting(false);
     navigateToNextBlock('register');
   };
@@ -92,69 +79,54 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
 
         <View
           style={styles.form}
-          onLayout={(e) => {
-            formContainerY.current = e.nativeEvent.layout.y;
-          }}
+          onLayout={(e) => { formContainerY.current = e.nativeEvent.layout.y; }}
         >
-          <AppTextInput
-            label="Nome completo"
-            value={name}
-            onChangeText={setName}
-            mode="alpha"
-            placeholder="Seu nome"
-            error={errors.name}
-            scrollRef={scrollRef}
-            scrollContainerY={formContainerY}
-            onSubmit={() => cpfRef.current?.focus()}
-          />
-          <AppTextInput
-            ref={cpfRef}
-            label="CPF"
-            value={cpf}
-            onKey={(k) =>
-              setCpf((v) =>
-                k === 'BACKSPACE' ? maskCPF(v.replace(/\D/g, '').slice(0, -1)) : maskCPF(v + k),
-              )
+          {REGISTRATION_FIELDS.map((field, index) => {
+            const isLast = index === REGISTRATION_FIELDS.length - 1;
+            const nextField = REGISTRATION_FIELDS[index + 1];
+
+            const sharedProps = {
+              label: field.label,
+              value: values[field.id] ?? '',
+              mode: field.mode,
+              placeholder: field.placeholder,
+              error: errors[field.id],
+              scrollRef,
+              scrollContainerY: formContainerY,
+              returnLabel: isLast ? 'Pronto' : undefined,
+              onSubmit: isLast
+                ? () => { keyboard.dismiss(); handleSubmit(); }
+                : () => { fieldRefs.current[nextField.id]?.focus(); },
+            } as const;
+
+            if (field.mask) {
+              const applyMask = MASKS[field.mask];
+              return (
+                <AppTextInput
+                  key={field.id}
+                  ref={(r) => { fieldRefs.current[field.id] = r; }}
+                  {...sharedProps}
+                  onKey={(k) =>
+                    setValue(
+                      field.id,
+                      k === 'BACKSPACE'
+                        ? applyMask((values[field.id] ?? '').replace(/\D/g, '').slice(0, -1))
+                        : applyMask((values[field.id] ?? '') + k),
+                    )
+                  }
+                />
+              );
             }
-            mode="numeric"
-            placeholder="000.000.000-00"
-            error={errors.cpf}
-            scrollRef={scrollRef}
-            scrollContainerY={formContainerY}
-            onSubmit={() => emailRef.current?.focus()}
-          />
-          <AppTextInput
-            ref={emailRef}
-            label="E-mail"
-            value={email}
-            onChangeText={setEmail}
-            mode="email"
-            placeholder="seu@email.com"
-            error={errors.email}
-            scrollRef={scrollRef}
-            scrollContainerY={formContainerY}
-            onSubmit={() => phoneRef.current?.focus()}
-          />
-          <AppTextInput
-            ref={phoneRef}
-            label="Telefone"
-            value={phone}
-            onKey={(k) =>
-              setPhone((v) =>
-                k === 'BACKSPACE' ? maskPhone(v.replace(/\D/g, '').slice(0, -1)) : maskPhone(v + k),
-              )
-            }
-            mode="numeric"
-            placeholder="11 99999-9999"
-            error={errors.phone}
-            returnLabel="Pronto"
-            scrollRef={scrollRef}
-            scrollContainerY={formContainerY}
-            onSubmit={() => {
-              keyboard.dismiss();
-              handleSubmit();
-            }}
-          />
+
+            return (
+              <AppTextInput
+                key={field.id}
+                ref={(r) => { fieldRefs.current[field.id] = r; }}
+                {...sharedProps}
+                onChangeText={(v) => setValue(field.id, v)}
+              />
+            );
+          })}
         </View>
 
         <Pressable
@@ -163,10 +135,7 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
             pressed && { opacity: 0.85 },
             submitting && { opacity: 0.6 },
           ]}
-          onPress={() => {
-            keyboard.dismiss();
-            handleSubmit();
-          }}
+          onPress={() => { keyboard.dismiss(); handleSubmit(); }}
           disabled={submitting}
         >
           <Text style={styles.submitBtnText}>{submitting ? 'Salvando...' : 'Continuar →'}</Text>

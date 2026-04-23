@@ -1,8 +1,6 @@
 export type Registration = {
-  name: string;
-  cpf: string;
-  email: string;
-  phone: string;
+  /** Keyed by FieldConfig.id — see src/config/registration.ts */
+  fields: Record<string, string>;
   submittedAt: string;
 };
 

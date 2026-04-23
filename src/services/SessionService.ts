@@ -1,5 +1,6 @@
 import { storage } from './storage';
 import type { Session, SessionEvent, SessionEventType, QuizAnswer, SpinResult, Registration } from '../types/session';
+import { REGISTRATION_FIELDS } from '../config/registration';
 
 const CURRENT_SESSION_KEY = 'current_session_id';
 const SESSION_IDS_KEY = 'session_ids';
@@ -79,21 +80,19 @@ export const SessionService = {
 
   // ─── Events ────────────────────────────────────────────────────────────────
 
-  async isCpfRegistered(cpf: string): Promise<boolean> {
-    const digits = cpf.replace(/\D/g, '');
+  async isDuplicateRegistered(fields: Record<string, string>): Promise<boolean> {
+    const uniqueField = REGISTRATION_FIELDS.find((f) => f.unique);
+    if (!uniqueField) return false;
+    const rawValue = (fields[uniqueField.id] ?? '').replace(/\D/g, '');
+    if (!rawValue) return false;
     const sessions = await this.getAllSessions();
     return sessions.some(
-      (s) => s.registration && s.registration.cpf.replace(/\D/g, '') === digits,
+      (s) => s.registration?.fields?.[uniqueField.id]?.replace(/\D/g, '') === rawValue,
     );
   },
 
   async recordRegistration(data: Registration): Promise<void> {
-    await this._appendEvent('registration_submitted', {
-      name: data.name,
-      cpf: data.cpf,
-      email: data.email,
-      phone: data.phone,
-    });
+    await this._appendEvent('registration_submitted', data.fields);
     await this._updateSession((s) => ({ ...s, registration: data }));
   },
 

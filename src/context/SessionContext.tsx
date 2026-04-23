@@ -4,7 +4,7 @@ import type { QuizAnswer, SpinResult, Registration } from '../types/session';
 
 type SessionContextType = {
   createSession: () => Promise<void>;
-  isCpfRegistered: (cpf: string) => Promise<boolean>;
+  isDuplicateRegistered: (fields: Record<string, string>) => Promise<boolean>;
   recordRegistration: (data: Registration) => Promise<void>;
   recordHomeView: () => Promise<void>;
   recordUnitsScreenView: () => Promise<void>;
@@ -24,7 +24,7 @@ const SessionContext = createContext<SessionContextType | null>(null);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const createSession = useCallback(() => SessionService.createSession().then(() => {}), []);
-  const isCpfRegistered = useCallback((cpf: string) => SessionService.isCpfRegistered(cpf), []);
+  const isDuplicateRegistered = useCallback((fields: Record<string, string>) => SessionService.isDuplicateRegistered(fields), []);
   const recordRegistration = useCallback(
     (data: Registration) => SessionService.recordRegistration(data),
     [],
@@ -65,7 +65,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     <SessionContext.Provider
       value={{
         createSession,
-        isCpfRegistered,
+        isDuplicateRegistered,
         recordRegistration,
         recordHomeView,
         recordUnitsScreenView,

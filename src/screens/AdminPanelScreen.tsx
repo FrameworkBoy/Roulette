@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as XLSX from 'xlsx';
 import { Colors } from '../constants/colors';
 import { PRIZES, PRIZE_SYSTEM_CONFIG } from '../config/prizes';
+import { REGISTRATION_FIELDS } from '../config/registration';
 import type { Prize, DailyStock } from '../config/prizes';
 import { PrizeService } from '../services/PrizeService';
 import { SessionService } from '../services/SessionService';
@@ -32,10 +33,9 @@ async function exportToExcel(
     Início: s.startedAt,
     Fim: s.endedAt ?? '',
     Motivo_Fim: s.endReason ?? '',
-    Nome: s.registration?.name ?? '',
-    CPF: s.registration?.cpf ?? '',
-    Email: s.registration?.email ?? '',
-    Telefone: s.registration?.phone ?? '',
+    ...Object.fromEntries(
+      REGISTRATION_FIELDS.map((f) => [f.label, s.registration?.fields[f.id] ?? '']),
+    ),
     Quiz_Nota: s.quiz ? `${s.quiz.score}/${s.quiz.total}` : '',
     Quiz_Elegível: s.quiz ? (s.quiz.eligible ? 'Sim' : 'Não') : '',
     Prêmio_ID: s.spin?.prizeId ?? '',
@@ -512,15 +512,11 @@ function SessionRow({ session }: { session: Session }) {
 
       {expanded && (
         <View style={styles.sessionDetail}>
-          {session.registration && (
-            <>
-              <Text style={styles.detailLine}>👤 {session.registration.name}</Text>
-              <Text style={styles.detailLine}>
-                🪪 {session.registration.cpf} · {session.registration.phone}
-              </Text>
-              <Text style={styles.detailLine}>✉️ {session.registration.email}</Text>
-            </>
-          )}
+          {session.registration && REGISTRATION_FIELDS.map((f) => (
+            <Text key={f.id} style={styles.detailLine}>
+              {f.label}: {session.registration!.fields[f.id] ?? '—'}
+            </Text>
+          ))}
           {/* {session.spin && (
             <Text style={styles.detailLine}>
               🎁 Prêmio: {session.spin.prizeLabel}
@@ -591,6 +587,11 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
   };
 
   const handleClear = () => {
+    if (Platform.OS === 'web') {
+      if (!window.confirm('Apagar todas as sessões? Isso não pode ser desfeito.')) return;
+      SessionService.clearAllSessions().then(() => setSessions([]));
+      return;
+    }
     Alert.alert('Limpar dados', 'Apagar todas as sessões? Isso não pode ser desfeito.', [
       { text: 'Cancelar', style: 'cancel' },
       {
