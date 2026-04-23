@@ -1,9 +1,5 @@
 import { createContext, useContext } from 'react';
-
-type InactivityControls = {
-  pause: () => void;
-  resume: () => void;
-};
+import type { InactivityControls } from '../types/inactivity';
 
 const InactivityContext = createContext<InactivityControls>({
   pause: () => {},
@@ -13,4 +9,4 @@ const InactivityContext = createContext<InactivityControls>({
 export const useInactivity = () => useContext(InactivityContext);
 
 export const InactivityProvider = InactivityContext.Provider;
-export type { InactivityControls };
+export type { InactivityControls } from '../types/inactivity';

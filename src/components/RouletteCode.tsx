@@ -206,7 +206,6 @@ const styles = StyleSheet.create({
     top: -scale(36),
     zIndex: 10,
     alignItems: 'center',
-    // @ts-expect-error - web only
     filter: 'drop-shadow(0px 0px 18px white) drop-shadow(0px 0px 8px white)',
   },
   pointer: {

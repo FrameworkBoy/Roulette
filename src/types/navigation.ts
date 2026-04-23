@@ -15,3 +15,7 @@ export type ScreenProps<T extends keyof RootStackParamList> = NativeStackScreenP
   RootStackParamList,
   T
 >;
+
+export type FlowContext = {
+  quizScore?: number;
+};

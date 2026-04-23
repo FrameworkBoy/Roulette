@@ -1,7 +1,7 @@
 import { FLOW } from '../config/flow';
 import type { BlockId } from '../config/flow';
 import { navigationRef } from './navigationRef';
-import type { RootStackParamList } from '../types/navigation';
+import type { RootStackParamList, FlowContext } from '../types/navigation';
 
 // navigate() is a discriminated union overload — TypeScript cannot verify params
 // for a dynamically resolved screen name. One cast here, nowhere else.
@@ -13,10 +13,6 @@ const BLOCK_ENTRY: Record<BlockId, keyof RootStackParamList> = {
   register: 'Register',
   quiz: 'Quiz',
   roulette: 'RouletteGame',
-};
-
-export type FlowContext = {
-  quizScore?: number;
 };
 
 function resolveNextScreen(fromIndex: number, ctx: FlowContext): keyof RootStackParamList {
