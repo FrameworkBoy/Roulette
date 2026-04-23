@@ -6,7 +6,9 @@ Everything Claude needs to know about this project.
 
 ## What This Is
 
-A **kiosk/totem application** for the **Nation CT / Total Health** gym chain. It runs on always-on touchscreen tablets or Windows kiosk machines deployed inside gym units. Users walk up, register, answer a quiz, spin a roulette wheel to win a prize, and are directed to gym unit info.
+**LabToGo** is a **multi-client event/activation platform** built by Nex to accelerate client delivery. Rather than building a new app per engagement, Nex configures this codebase for each client by adjusting the building blocks — enabling, disabling, or reordering flow steps, and swapping assets and prizes — without touching the core logic.
+
+Each deployment runs on touchscreen devices (tablets, Windows kiosks) at a client's physical location. The end-user experience varies by client but always follows the same underlying flow architecture.
 
 The app is also distributed as a **Windows desktop app via Electron** (Expo web export fed into Electron). There is also a `react-native-windows` integration for native Windows support.
 
@@ -57,7 +59,7 @@ npm run electron:build    # expo export --platform web && electron-builder --win
 ├── electron/
 │   └── main.js               # Electron main process (serves dist/)
 ├── src/
-│   ├── assets/               # nation-logo.png, nation-logo-2.png, *.mp4
+│   ├── assets/               # Client logos, lab-to-go.png, *.mp4
 │   ├── components/
 │   │   ├── AppKeyboard.tsx       # Custom on-screen keyboard (alpha/numeric/email modes)
 │   │   ├── AppTextInput.tsx      # Fake text input wired to AppKeyboard
@@ -73,7 +75,7 @@ npm run electron:build    # expo export --platform web && electron-builder --win
 │   │   ├── inactivity.ts     # Per-screen inactivity timeout config
 │   │   └── prizes.ts         # Prize definitions, wheel slots, stock rules, time windows
 │   ├── constants/
-│   │   └── colors.ts         # Design tokens (dark theme, red brand)
+│   │   └── colors.ts         # Design tokens (dark theme, NEX LAB purple brand)
 │   ├── context/
 │   │   ├── InactivityContext.tsx # pause()/resume() controls for screens
 │   │   ├── KeyboardContext.tsx   # Active keyboard input management + KeyboardArea
@@ -125,7 +127,7 @@ The "Assista aos vídeos" button on Home goes directly to Units (bypasses the fl
 
 ## Building Blocks System
 
-Configured in `src/config/flow.ts`. Edit the `FLOW` array to enable, disable, or reorder blocks for each client deployment.
+This is the core of the platform. Each client deployment is configured by editing `src/config/flow.ts` — no new screens or logic needed. You enable, disable, and reorder blocks to match the client's requirements.
 
 ```ts
 // All blocks, default order
@@ -164,17 +166,17 @@ The `Result` screen is internal to the `quiz` block — it is not a standalone b
 
 ```ts
 export const APP_CONFIG = {
-  virtualKeyboard: true,  // true = custom on-screen keyboard (kiosk), false = native system keyboard (dev)
+  virtualKeyboard: true,  // true = custom on-screen keyboard (touch deployments), false = native system keyboard (dev)
 };
 ```
 
-**Set `virtualKeyboard: true` for production/kiosk builds. `false` is for development on non-touch devices.**
+**Set `virtualKeyboard: true` for production/touch deployments. `false` is for development on non-touch devices.**
 
 ---
 
 ## Keyboard System
 
-The app has a fully custom on-screen keyboard (`AppKeyboard.tsx`) designed for touchscreen kiosks where the native system keyboard is not appropriate.
+The app has a fully custom on-screen keyboard (`AppKeyboard.tsx`) designed for touchscreen deployments where the native system keyboard is not appropriate.
 
 - `KeyboardProvider` (in `App.tsx`) manages which input is active
 - `AppTextInput` is a fake `Pressable`-based input that displays text and a blinking cursor; it calls `keyboard.show()` on tap
@@ -227,21 +229,24 @@ Configured in `src/config/prizes.ts`. Each prize has:
 
 ## Design System
 
-Dark theme. Key tokens in `src/constants/colors.ts`:
+Dark theme based on the NEX LAB brand palette. Key tokens in `src/constants/colors.ts`:
 
 | Token | Value | Use |
 |---|---|---|
-| `Colors.background` | `#0A0A0A` | Screen backgrounds |
-| `Colors.surface` | `#1A1A1A` | Cards, inputs |
-| `Colors.primary` | `#E22725` | Brand red — buttons, accents |
+| `Colors.background` | `#212121` | Screen backgrounds (NEX escuro) |
+| `Colors.surface` | `#333333` | Cards, inputs |
+| `Colors.surfaceElevated` | `#4A4A4A` | Elevated cards |
+| `Colors.surfaceHighlight` | `#606060` | Hover / pressed states |
+| `Colors.border` | `#4A4A4A` | Input borders, dividers |
+| `Colors.primary` | `#A563FF` | Brand purple — buttons, accents |
 | `Colors.text` | `#FFFFFF` | Primary text |
-| `Colors.textSecondary` | `#888888` | Secondary text |
-| `Colors.border` | `#2A2A2A` | Input borders |
-| `Colors.error` | `#FF4444` | Validation errors |
-| `Colors.textOnPrimary` | `#FFFFFF` | Text on red buttons |
-| `Colors.overlay` | `rgba(0,0,0,0.6)` | Modal overlays |
+| `Colors.textSecondary` | `#878787` | Secondary text |
+| `Colors.textMuted` | `#606060` | Placeholder / disabled text |
+| `Colors.error` | `#c92c3f` | Validation errors |
+| `Colors.textOnPrimary` | `#FFFFFF` | Text on primary buttons |
+| `Colors.overlay` | `rgba(0,0,0,0.7)` | Modal overlays |
 
-All sizes use `scale()` from `src/utils/responsive.ts` for totem/kiosk resolution scaling.
+All sizes use `scale()` from `src/utils/responsive.ts` for touch-device resolution scaling.
 
 ---
 
