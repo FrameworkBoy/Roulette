@@ -1,9 +1,10 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useKeyboard } from '../context/KeyboardContext';
 import type { KeyboardMode } from '../components/AppKeyboard';
 import { Colors } from '../constants/colors';
 import { scale } from '../utils/responsive';
+import { APP_CONFIG } from '../config/app';
 
 export interface AppTextInputRef {
   focus: () => void;
@@ -123,6 +124,49 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
       }
     }, []);
 
+    if (!APP_CONFIG.virtualKeyboard) {
+      const handleNativeChange = (text: string) => {
+        if (onKeyRef.current) {
+          const prevDigits = valueRef.current.replace(/\D/g, '');
+          const newDigits = text.replace(/\D/g, '');
+          if (newDigits.length > prevDigits.length) {
+            for (const ch of newDigits.slice(prevDigits.length)) onKeyRef.current(ch);
+          } else if (newDigits.length < prevDigits.length) {
+            const count = prevDigits.length - newDigits.length;
+            for (let i = 0; i < count; i++) onKeyRef.current('BACKSPACE');
+          }
+        } else {
+          onChangeTextRef.current?.(text);
+        }
+      };
+
+      const nativeRef = useRef<TextInput>(null);
+      useImperativeHandle(ref, () => ({
+        focus: () => nativeRef.current?.focus(),
+        blur: () => nativeRef.current?.blur(),
+      }));
+
+      return (
+        <View style={styles.wrapper}>
+          <Text style={styles.label}>{label}</Text>
+          <TextInput
+            ref={nativeRef}
+            style={[styles.input, styles.nativeInput, !!error && styles.inputError]}
+            value={value}
+            onChangeText={handleNativeChange}
+            onSubmitEditing={onSubmit}
+            placeholder={placeholder}
+            placeholderTextColor={Colors.textSecondary}
+            autoCapitalize={mode === 'alpha' ? 'words' : 'none'}
+            keyboardType={mode === 'numeric' ? 'number-pad' : mode === 'email' ? 'email-address' : 'default'}
+            returnKeyType="next"
+            autoFocus={autoFocus}
+          />
+          {!!error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+      );
+    }
+
     return (
       <Pressable
         style={styles.wrapper}
@@ -163,6 +207,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(16),
     paddingVertical: scale(14),
     gap: scale(2),
+  },
+  nativeInput: {
+    color: Colors.text,
+    fontSize: scale(16),
+    paddingHorizontal: scale(16),
+    paddingVertical: scale(14),
   },
   inputFocused: {
     borderColor: Colors.primary,
