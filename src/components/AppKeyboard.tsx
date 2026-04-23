@@ -17,6 +17,10 @@ const R1 = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
 const R2 = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'];
 const R3 = ['z', 'x', 'c', 'v', 'b', 'n', 'm'];
 
+const S_R1 = ['!', '#', '$', '%', '^', '&', '*', '(', ')'];
+const S_R2 = ['-', '_', '+', '=', '/', ':', ';', "'", '"'];
+const S_R3 = [',', '.', '~', '`', '\\', '|', '<', '>'];
+
 type Variant = 'default' | 'action' | 'active' | 'submit';
 
 function Key({
@@ -68,6 +72,7 @@ export default function AppKeyboard({
   returnLabel = 'Próximo',
 }: AppKeyboardProps) {
   const [caps, setCaps] = useState(false);
+  const [showSymbols, setShowSymbols] = useState(false);
 
   if (!visible) return null;
 
@@ -98,6 +103,45 @@ export default function AppKeyboard({
         </View>
         <View style={styles.submitRow}>
           <Key label={returnLabel} variant="submit" onPress={onSubmit} />
+        </View>
+      </View>
+    );
+  }
+
+  if (mode === 'email' && showSymbols) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.row}>
+          {['1','2','3','4','5','6','7','8','9','0'].map((k) => (
+            <Key key={k} label={k} onPress={() => onKey(k)} />
+          ))}
+        </View>
+        <View style={styles.row}>
+          {S_R1.map((k) => (
+            <Key key={k} label={k} onPress={() => onKey(k)} />
+          ))}
+          <Key label="?" onPress={() => onKey('?')} />
+        </View>
+        <View style={styles.row}>
+          <View style={{ flex: 0.5 }} />
+          {S_R2.map((k) => (
+            <Key key={k} label={k} onPress={() => onKey(k)} />
+          ))}
+          <View style={{ flex: 0.5 }} />
+        </View>
+        <View style={styles.row}>
+          <Key label="⌫" flex={1.5} variant="action" onPress={() => onKey('BACKSPACE')} />
+          {S_R3.map((k) => (
+            <Key key={k} label={k} onPress={() => onKey(k)} />
+          ))}
+          <Key label="@" flex={1.5} onPress={() => onKey('@')} />
+        </View>
+        <View style={styles.row}>
+          <Key label="ABC" flex={1.5} variant="action" onPress={() => setShowSymbols(false)} />
+          <Key label="." flex={1} onPress={() => onKey('.')} />
+          <Key label=".com" flex={1.8} onPress={() => onKey('.com')} />
+          <View style={{ flex: 1.7 }} />
+          <Key label={returnLabel} flex={2} variant="submit" onPress={onSubmit} />
         </View>
       </View>
     );
@@ -140,9 +184,10 @@ export default function AppKeyboard({
         {mode === 'email' ? (
           <>
             <Key label="@" flex={1.5} onPress={() => onKey('@')} />
+            <Key label="?123" flex={1.5} variant="action" onPress={() => setShowSymbols(true)} />
             <Key label="." flex={1} onPress={() => onKey('.')} />
             <Key label=".com" flex={1.8} onPress={() => onKey('.com')} />
-            <View style={{ flex: 1.7 }} />
+            <View style={{ flex: 0.2 }} />
           </>
         ) : (
           <Key label="espaço" flex={6} onPress={() => onKey(' ')} />
