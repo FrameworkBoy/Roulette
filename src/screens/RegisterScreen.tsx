@@ -10,6 +10,7 @@ import { useKeyboard, KeyboardArea } from '../context/KeyboardContext';
 import type { ScreenProps } from '../types/navigation';
 import { navigateToNextBlock } from '../navigation/flowNavigation';
 import { REGISTRATION_FIELDS, MASKS } from '../config/registration';
+import { CONTENT } from '../config/content';
 
 export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) {
   const session = useSession();
@@ -138,7 +139,7 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
           onPress={() => { keyboard.dismiss(); handleSubmit(); }}
           disabled={submitting}
         >
-          <Text style={styles.submitBtnText}>{submitting ? 'Salvando...' : 'Continuar →'}</Text>
+          <Text style={styles.submitBtnText}>{submitting ? CONTENT.register.submitLoadingCta : CONTENT.register.submitCta}</Text>
         </Pressable>
       </ScrollView>
       <KeyboardArea />

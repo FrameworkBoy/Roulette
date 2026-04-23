@@ -7,6 +7,7 @@ import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { UNITS } from '../config/units';
+import { CONTENT } from '../config/content';
 
 export default function PostInteractionScreen({ navigation }: ScreenProps<'PostInteraction'>) {
   const session = useSession();
@@ -20,10 +21,8 @@ export default function PostInteractionScreen({ navigation }: ScreenProps<'PostI
       <View style={styles.content}>
         <ScreenLogo size="small" />
         <View style={styles.header}>
-          <Text style={styles.title}>Conheça nossas unidades</Text>
-          <Text style={styles.subtitle}>
-            Venha nos visitar e transforme sua vida!
-          </Text>
+          <Text style={styles.title}>{CONTENT.postInteraction.title}</Text>
+          <Text style={styles.subtitle}>{CONTENT.postInteraction.subtitle}</Text>
         </View>
 
         <View style={styles.unitButtons}>
@@ -43,7 +42,7 @@ export default function PostInteractionScreen({ navigation }: ScreenProps<'PostI
           style={({ pressed }) => [styles.skipButton, pressed && styles.pressed]}
           onPress={() => navigation.navigate('Home')}
         >
-          <Text style={styles.skipButtonText}>Pular</Text>
+          <Text style={styles.skipButtonText}>{CONTENT.postInteraction.skipCta}</Text>
         </Pressable>
       </View>
     </SafeAreaView>

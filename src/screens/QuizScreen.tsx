@@ -9,6 +9,7 @@ import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { useInactivity } from '../context/InactivityContext';
 import { QUIZ_TOTAL, QUIZ_REVEAL_DELAY, QUIZ_MIN_TO_WIN } from '../config/quiz';
+import { CONTENT } from '../config/content';
 
 type Question = {
   id: number;
@@ -124,7 +125,7 @@ export default function QuizScreen({ navigation }: ScreenProps<'Quiz'>) {
         </View>
 
         <View style={styles.questionContainer}>
-          <Text style={styles.questionNumber}>Pergunta {currentIndex + 1}</Text>
+          <Text style={styles.questionNumber}>{CONTENT.quiz.questionLabel} {currentIndex + 1}</Text>
           <Text style={styles.questionText}>{current.question}</Text>
         </View>
 

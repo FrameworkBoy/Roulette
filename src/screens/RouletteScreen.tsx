@@ -11,6 +11,7 @@ import { useSession } from '../context/SessionContext';
 import { navigateToNextBlock } from '../navigation/flowNavigation';
 import type { Prize } from '../config/prizes';
 import { PRIZE_SYSTEM_CONFIG } from '../config/prizes';
+import { CONTENT } from '../config/content';
 
 export default function RouletteScreen(_: ScreenProps<'RouletteGame'>) {
   const [prize, setPrize] = useState<Prize | null>(null);
@@ -43,16 +44,14 @@ export default function RouletteScreen(_: ScreenProps<'RouletteGame'>) {
           <View style={styles.modal}>
             {prize && prize.id === PRIZE_SYSTEM_CONFIG.noPrizeId ? (
               <>
-                <Text style={styles.modalTitle}>Que pena!</Text>
+                <Text style={styles.modalTitle}>{CONTENT.roulette.noPrizeTitle}</Text>
                 <Text style={styles.modalBody}>{prize.label}</Text>
               </>
             ) : (
               <>
-                <Text style={styles.modalTitle}>Parabéns!</Text>
+                <Text style={styles.modalTitle}>{CONTENT.roulette.winTitle}</Text>
                 <Text style={styles.modalBody}>
-                  {'Você ganhou\n'}
-                  <Text style={styles.modalPrize}>{prize?.label}</Text>
-                  {'!'}
+                  {CONTENT.roulette.winBody.replace('{prize}', prize?.label ?? '')}
                 </Text>
               </>
             )}
@@ -63,7 +62,7 @@ export default function RouletteScreen(_: ScreenProps<'RouletteGame'>) {
                 navigateToNextBlock('roulette');
               }}
             >
-              <Text style={styles.modalButtonText}>Ver nossas unidades</Text>
+              <Text style={styles.modalButtonText}>{CONTENT.roulette.continueCta}</Text>
             </Pressable>
           </View>
         </View>
@@ -111,10 +110,6 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: 'center',
     lineHeight: scale(28),
-  },
-  modalPrize: {
-    fontWeight: 'bold',
-    color: Colors.text,
   },
   modalButton: {
     backgroundColor: Colors.primary,

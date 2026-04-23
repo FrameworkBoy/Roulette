@@ -8,6 +8,7 @@ import { Colors } from '../constants/colors';
 import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { UNITS } from '../config/units';
+import { CONTENT } from '../config/content';
 
 export default function UnitsScreen({ navigation, route }: ScreenProps<'Units'>) {
   const session = useSession();
@@ -20,7 +21,7 @@ export default function UnitsScreen({ navigation, route }: ScreenProps<'Units'>)
         <ScreenLogo size="small" />
 
         <View style={styles.card}>
-          <Text style={styles.cardHeader}>Nossas unidades</Text>
+          <Text style={styles.cardHeader}>{CONTENT.units.sectionHeader}</Text>
           <View style={styles.units}>
             {UNITS.map((unit) => (
               <View key={unit.id} style={styles.unitRow}>
@@ -35,7 +36,7 @@ export default function UnitsScreen({ navigation, route }: ScreenProps<'Units'>)
                     setActiveVideo(unit.video);
                   }}
                 >
-                  <Text style={styles.videoButtonText}>Assista ao vídeo</Text>
+                  <Text style={styles.videoButtonText}>{CONTENT.units.videoCta}</Text>
                 </Pressable>
               </View>
             ))}
@@ -47,7 +48,7 @@ export default function UnitsScreen({ navigation, route }: ScreenProps<'Units'>)
             style={({ pressed }) => [styles.skipButton, pressed && styles.pressed]}
             onPress={() => navigation.navigate('Home')}
           >
-            <Text style={styles.skipButtonText}>{fromQuiz ? 'Pular e finalizar.' : 'Voltar'}</Text>
+            <Text style={styles.skipButtonText}>{fromQuiz ? CONTENT.units.skipCta : CONTENT.units.backCta}</Text>
           </Pressable>
         </View>
       </View>

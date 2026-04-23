@@ -7,6 +7,7 @@ import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { navigateToFirstBlock } from '../navigation/flowNavigation';
 import { CLIENT } from '../config/client';
+import { CONTENT } from '../config/content';
 
 export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
   const session = useSession();
@@ -53,7 +54,7 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
             style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
             onPress={() => navigateToFirstBlock()}
           >
-            <Text style={styles.primaryButtonText}>Começar</Text>
+            <Text style={styles.primaryButtonText}>{CONTENT.home.primaryCta}</Text>
           </Pressable>
 
           <Pressable
@@ -63,7 +64,7 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
               navigation.navigate('Units');
             }}
           >
-            <Text style={styles.secondaryButtonText}>Assista aos vídeos</Text>
+            <Text style={styles.secondaryButtonText}>{CONTENT.home.secondaryCta}</Text>
           </Pressable>
         </View>
       </View>

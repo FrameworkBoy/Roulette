@@ -8,7 +8,7 @@ import type { ScreenProps } from '../types/navigation';
 import { useSession } from '../context/SessionContext';
 import { navigateToNextBlock } from '../navigation/flowNavigation';
 import { QUIZ_MIN_TO_WIN } from '../config/quiz';
-import { CLIENT } from '../config/client';
+import { CONTENT } from '../config/content';
 
 export default function ResultScreen({ route, navigation }: ScreenProps<'Result'>) {
   const { score, total } = route.params;
@@ -29,16 +29,14 @@ export default function ResultScreen({ route, navigation }: ScreenProps<'Result'
               <Text style={styles.scoreNumber}>{score}</Text>
               <Text style={styles.scoreTotal}>/{total}</Text>
             </Text>
-            <Text style={styles.scoreLabel}>acertos!</Text>
+            <Text style={styles.scoreLabel}>{CONTENT.result.scoreLabel}</Text>
           </View>
           <View style={styles.messageBlock}>
             <Text style={styles.messageTitle}>
-              {eligible ? 'Quiz finalizado' : 'Quiz finalizado.\nNão foi dessa vez!'}
+              {eligible ? CONTENT.result.eligibleTitle : CONTENT.result.ineligibleTitle}
             </Text>
             <Text style={styles.messageText}>
-              {eligible
-                ? 'Parabéns! Você atingiu a pontuação!'
-                : `Obrigado por participar.\nVeja as unidades da ${CLIENT.name}.`}
+              {eligible ? CONTENT.result.eligibleMessage : CONTENT.result.ineligibleMessage}
             </Text>
           </View>
         </View>
@@ -49,7 +47,7 @@ export default function ResultScreen({ route, navigation }: ScreenProps<'Result'
             onPress={() => navigateToNextBlock('quiz', { quizScore: score })}
           >
             <Text style={styles.primaryButtonText}>
-              {eligible ? 'Conheça as nossas unidades' : 'Ver nossas unidades'}
+              {eligible ? CONTENT.result.eligibleCta : CONTENT.result.ineligibleCta}
             </Text>
           </Pressable>
         </View>
