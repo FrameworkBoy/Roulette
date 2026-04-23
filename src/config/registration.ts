@@ -1,6 +1,7 @@
+import { KeyboardMode } from '../components/AppKeyboard';
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type KeyboardMode = 'alpha' | 'numeric' | 'email';
 type FieldMask = 'cpf' | 'phone';
 
 export type FieldConfig = {
@@ -74,7 +75,7 @@ export const REGISTRATION_FIELDS: FieldConfig[] = [
     id: 'email',
     label: 'E-mail',
     placeholder: 'seu@email.com',
-    mode: 'email',
+    mode: 'alpha',
     required: true,
     validate: (v) =>
       !v.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? 'E-mail inválido' : null,

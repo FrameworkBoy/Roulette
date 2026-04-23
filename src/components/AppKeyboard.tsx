@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../constants/colors';
 import { scale } from '../utils/responsive';
 
-export type KeyboardMode = 'alpha' | 'email' | 'numeric';
+export type KeyboardMode = 'alpha' | 'numeric';
 
 interface AppKeyboardProps {
   visible: boolean;
@@ -16,6 +16,14 @@ interface AppKeyboardProps {
 const R1 = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
 const R2 = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'];
 const R3 = ['z', 'x', 'c', 'v', 'b', 'n', 'm'];
+
+const NUM_R1 = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const NUM_R2 = ['-', '/', ':', ';', '(', ')', '$', '&', '@'];
+const NUM_R3 = ['.', ',', '?', '!', "'"];
+
+const SYM_R1 = ['[', ']', '{', '}', '#', '%', '^', '*', '+', '='];
+const SYM_R2 = ['_', '\\', '|', '~', '<', '>', '€', '£', '¥'];
+const SYM_R3 = ['.', ',', '?', '!', "'"];
 
 type Variant = 'default' | 'action' | 'active' | 'submit';
 
@@ -60,6 +68,8 @@ function Key({
   );
 }
 
+type Layer = 'alpha' | 'num' | 'sym';
+
 export default function AppKeyboard({
   visible,
   mode = 'alpha',
@@ -68,6 +78,7 @@ export default function AppKeyboard({
   returnLabel = 'Próximo',
 }: AppKeyboardProps) {
   const [caps, setCaps] = useState(false);
+  const [layer, setLayer] = useState<Layer>('alpha');
 
   if (!visible) return null;
 
@@ -103,15 +114,45 @@ export default function AppKeyboard({
     );
   }
 
-  return (
-    <View style={styles.container}>
-      {mode === 'email' && (
+  if (layer === 'num' || layer === 'sym') {
+    const r1 = layer === 'num' ? NUM_R1 : SYM_R1;
+    const r2 = layer === 'num' ? NUM_R2 : SYM_R2;
+    const r3 = layer === 'num' ? NUM_R3 : SYM_R3;
+    const toggleLabel = layer === 'num' ? '#=+' : '123';
+    const toggleTarget: Layer = layer === 'num' ? 'sym' : 'num';
+
+    return (
+      <View style={styles.container}>
         <View style={styles.row}>
-          {['1','2','3','4','5','6','7','8','9','0'].map((k) => (
+          {r1.map((k) => (
             <Key key={k} label={k} onPress={() => onKey(k)} />
           ))}
         </View>
-      )}
+        <View style={styles.row}>
+          <View style={{ flex: 0.5 }} />
+          {r2.map((k) => (
+            <Key key={k} label={k} onPress={() => onKey(k)} />
+          ))}
+          <View style={{ flex: 0.5 }} />
+        </View>
+        <View style={styles.row}>
+          <Key label={toggleLabel} flex={1.5} variant="action" onPress={() => setLayer(toggleTarget)} />
+          {r3.map((k) => (
+            <Key key={k} label={k} onPress={() => onKey(k)} />
+          ))}
+          <Key label="⌫" flex={1.5} variant="action" onPress={() => onKey('BACKSPACE')} />
+        </View>
+        <View style={styles.row}>
+          <Key label="ABC" flex={2} variant="action" onPress={() => setLayer('alpha')} />
+          <Key label="espaço" flex={4} onPress={() => onKey(' ')} />
+          <Key label={returnLabel} flex={2} variant="submit" onPress={onSubmit} />
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
       <View style={styles.row}>
         {R1.map((k) => (
           <Key key={k} label={apply(k)} onPress={() => onKey(apply(k))} />
@@ -137,16 +178,8 @@ export default function AppKeyboard({
         <Key label="⌫" flex={1.5} variant="action" onPress={() => onKey('BACKSPACE')} />
       </View>
       <View style={styles.row}>
-        {mode === 'email' ? (
-          <>
-            <Key label="@" flex={1.5} onPress={() => onKey('@')} />
-            <Key label="." flex={1} onPress={() => onKey('.')} />
-            <Key label=".com" flex={1.8} onPress={() => onKey('.com')} />
-            <View style={{ flex: 1.7 }} />
-          </>
-        ) : (
-          <Key label="espaço" flex={6} onPress={() => onKey(' ')} />
-        )}
+        <Key label="123" flex={2} variant="action" onPress={() => setLayer('num')} />
+        <Key label="espaço" flex={4} onPress={() => onKey(' ')} />
         <Key label={returnLabel} flex={2} variant="submit" onPress={onSubmit} />
       </View>
     </View>
