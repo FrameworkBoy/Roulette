@@ -21,7 +21,7 @@ export const CONTENT = {
     ineligibleTitle: 'Quiz finalizado.\nNão foi dessa vez!',
     eligibleMessage: 'Parabéns! Você atingiu a pontuação!',
     ineligibleMessage: `Obrigado por participar.\nVeja as unidades da ${CLIENT.name}.`,
-    eligibleCta: 'Conheça as nossas unidades',
+    eligibleCta: 'Girar a roleta!',
     ineligibleCta: 'Ver nossas unidades',
   },
 
