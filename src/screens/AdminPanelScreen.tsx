@@ -337,6 +337,7 @@ function RuleItem({
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in JSX below; rule false-positive on function declarations
 function PrizeRow({
   label,
   count,
@@ -429,6 +430,7 @@ function PrizeRow({
 
 // ─── General rules card ───────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in JSX below; rule false-positive on function declarations
 function GeneralRulesCard() {
   const [expanded, setExpanded] = useState(false);
   const cfg = PRIZE_SYSTEM_CONFIG;
@@ -496,11 +498,11 @@ function SessionRow({ session }: { session: Session }) {
               </Text>
             </View>
           )}
-          {/* {session.spin && (
+          {session.spin && (
             <View style={styles.badgePurple}>
               <Text style={styles.badgeText}>🎰</Text>
             </View>
-          )} */}
+          )}
           {session.endReason === 'inactivity' && (
             <View style={styles.badgeOrange}>
               <Text style={styles.badgeText}>⏱</Text>
@@ -512,16 +514,15 @@ function SessionRow({ session }: { session: Session }) {
 
       {expanded && (
         <View style={styles.sessionDetail}>
-          {session.registration && REGISTRATION_FIELDS.map((f) => (
-            <Text key={f.id} style={styles.detailLine}>
-              {f.label}: {session.registration!.fields[f.id] ?? '—'}
-            </Text>
-          ))}
-          {/* {session.spin && (
-            <Text style={styles.detailLine}>
-              🎁 Prêmio: {session.spin.prizeLabel}
-            </Text>
-          )} */}
+          {session.registration &&
+            REGISTRATION_FIELDS.map((f) => (
+              <Text key={f.id} style={styles.detailLine}>
+                {f.label}: {session.registration!.fields[f.id] ?? '—'}
+              </Text>
+            ))}
+          {session.spin && (
+            <Text style={styles.detailLine}>🎁 Prêmio: {session.spin.prizeLabel}</Text>
+          )}
           {session.quiz && (
             <>
               <Text style={styles.detailLine}>
@@ -614,14 +615,13 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
       <View style={styles.cardRow}>
         <StatCard label="Total" value={s.total} />
         <StatCard label="Hoje" value={s.today} />
-        {/* <StatCard label="Giraram" value={s.spun} /> */}
+        <StatCard label="Giraram" value={s.spun} />
         <StatCard
           label="Inatividade"
           value={s.inactivityEnded}
           sub={pct(s.inactivityEnded, s.total)}
         />
       </View>
-
       {/* ── Funnel ─────────────────────────────────── */}
       <SectionTitle>Funil de conversão</SectionTitle>
       <View style={styles.card}>
@@ -649,14 +649,8 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
           total={s.total}
           color={Colors.success}
         />
-        {/* <FunnelRow
-          label="Giraram a roleta"
-          count={s.spun}
-          total={s.total}
-          color={Colors.warning}
-        /> */}
+        <FunnelRow label="Giraram a roleta" count={s.spun} total={s.total} color={Colors.warning} />
       </View>
-
       {/* ── Quiz performance ───────────────────────── */}
       <SectionTitle>Performance do Quiz</SectionTitle>
       <View style={styles.cardRow}>
@@ -672,8 +666,7 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
           sub={`${s.completedQuiz} provas`}
         />
       </View>
-
-      {/* ── Prizes (hidden while roulette flow is disabled) ──────────────
+      ── Prizes (hidden while roulette flow is disabled) ──────────────
       <SectionTitle>Prêmios distribuídos</SectionTitle>
       <View style={styles.card}>
         <View style={styles.prizeHeader}>
@@ -696,18 +689,16 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
               count={p.count}
               total={s.totalPrizes}
               remaining={stockMap.get(p.id)}
-              isNoPrize={p.id === "no-prize"}
-              extraTopMargin={p.id === "no-prize" && i > 0}
+              isNoPrize={p.id === 'no-prize'}
+              extraTopMargin={p.id === 'no-prize' && i > 0}
               prize={prizeCfg}
             />
           );
         })}
       </View>
-
       <SectionTitle>Regras gerais</SectionTitle>
       <GeneralRulesCard />
-      ── */}
-
+      ──
       {/* ── Units ──────────────────────────────────── */}
       <SectionTitle>Cliques por unidade</SectionTitle>
       <View style={styles.card}>
@@ -730,7 +721,6 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
           ))
         )}
       </View>
-
       {/* ── Timing ─────────────────────────────────── */}
       <SectionTitle>Tempo médio de sessão</SectionTitle>
       <View style={styles.card}>
@@ -758,7 +748,6 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
           </View>
         )}
       </View>
-
       {/* ── Export + Sessions list header ──────────── */}
       <Pressable
         style={({ pressed }) => [
@@ -775,7 +764,6 @@ export default function AdminPanelScreen({ navigation }: ScreenProps<'AdminPanel
           <Text style={styles.exportBtnText}>⬇ Exportar Excel</Text>
         )}
       </Pressable>
-
       <SectionTitle>Sessões individuais</SectionTitle>
     </View>
   );

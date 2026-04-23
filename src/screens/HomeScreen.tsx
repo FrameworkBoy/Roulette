@@ -40,11 +40,7 @@ export default function HomeScreen({ navigation }: ScreenProps<'Home'>) {
 
       <View style={styles.inner}>
         <View style={styles.top}>
-          <Image
-            source={CLIENT.logo}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <Image source={CLIENT.logo} style={styles.logo} resizeMode="contain" />
           <Text style={styles.title}>{CLIENT.tagline.line1}</Text>
           <Text style={styles.titleAccent}>{CLIENT.tagline.line2}</Text>
         </View>

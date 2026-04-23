@@ -1,4 +1,5 @@
 import type { ImageSourcePropType } from 'react-native';
+import logo from '../assets/lab-to-go.png';
 
 export type ClientConfig = {
   /** Client name — used in copy throughout the app (e.g. result screen messages). */
@@ -14,7 +15,7 @@ export type ClientConfig = {
 
 export const CLIENT: ClientConfig = {
   name: 'LabToGo',
-  logo: require('../assets/lab-to-go.png'),
+  logo,
   tagline: {
     line1: 'TESTE SEUS',
     line2: 'CONHECIMENTOS!',

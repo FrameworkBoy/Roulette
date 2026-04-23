@@ -22,12 +22,18 @@ const SPIN_DURATION = 4000;
 const FULL_SPINS = 5;
 
 const DEFAULT_COLORS = [
-  Colors.primary, Colors.surface, Colors.primaryDark, Colors.border,
-  Colors.primary, Colors.surface, Colors.primaryDark, Colors.border,
+  Colors.primary,
+  Colors.surface,
+  Colors.primaryDark,
+  Colors.border,
+  Colors.primary,
+  Colors.surface,
+  Colors.primaryDark,
+  Colors.border,
 ];
 
-const DEFAULT_SLOTS: SlotConfig[] = PRIZES.filter(p => p.id !== PRIZE_SYSTEM_CONFIG.noPrizeId)
-  .concat(PRIZES.filter(p => p.id === PRIZE_SYSTEM_CONFIG.noPrizeId))
+const DEFAULT_SLOTS: SlotConfig[] = PRIZES.filter((p) => p.id !== PRIZE_SYSTEM_CONFIG.noPrizeId)
+  .concat(PRIZES.filter((p) => p.id === PRIZE_SYSTEM_CONFIG.noPrizeId))
   .map((prize, i) => ({
     prize,
     color: DEFAULT_COLORS[i % DEFAULT_COLORS.length],
@@ -86,7 +92,7 @@ export default function RouletteCode({ slots = DEFAULT_SLOTS, size = 300, onSpin
     const prize = await PrizeService.selectPrize();
     await PrizeService.consumePrize(prize.id);
 
-    const index = slots.findIndex(s => s.prize.id === prize.id);
+    const index = slots.findIndex((s) => s.prize.id === prize.id);
     const targetIndex = index >= 0 ? index : 0;
 
     setIsSelecting(false);
@@ -117,9 +123,10 @@ export default function RouletteCode({ slots = DEFAULT_SLOTS, size = 300, onSpin
                 const labelR = r * 0.65;
                 const labelPos = polarToCartesian(cx, cy, labelR, midAngle);
                 const maxChars = 12;
-                const label = slot.prize.label.length > maxChars
-                  ? slot.prize.label.slice(0, maxChars - 1) + '…'
-                  : slot.prize.label;
+                const label =
+                  slot.prize.label.length > maxChars
+                    ? slot.prize.label.slice(0, maxChars - 1) + '…'
+                    : slot.prize.label;
 
                 return (
                   <G key={slot.prize.id + i}>
@@ -168,7 +175,11 @@ export default function RouletteCode({ slots = DEFAULT_SLOTS, size = 300, onSpin
       </View>
 
       <Pressable
-        style={({ pressed }) => [styles.button, busy && styles.buttonDisabled, pressed && !busy && styles.buttonPressed]}
+        style={({ pressed }) => [
+          styles.button,
+          busy && styles.buttonDisabled,
+          pressed && !busy && styles.buttonPressed,
+        ]}
         onPress={handleSpin}
         disabled={busy}
       >
@@ -194,7 +205,7 @@ const styles = StyleSheet.create({
     top: -scale(36),
     zIndex: 10,
     alignItems: 'center',
-    // @ts-ignore - web only
+    // @ts-expect-error - web only
     filter: 'drop-shadow(0px 0px 18px white) drop-shadow(0px 0px 8px white)',
   },
   pointer: {

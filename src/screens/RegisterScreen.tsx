@@ -12,7 +12,7 @@ import { navigateToNextBlock } from '../navigation/flowNavigation';
 import { REGISTRATION_FIELDS, MASKS } from '../config/registration';
 import { CONTENT } from '../config/content';
 
-export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) {
+export default function RegisterScreen({ navigation: _navigation }: ScreenProps<'Register'>) {
   const session = useSession();
   const keyboard = useKeyboard();
 

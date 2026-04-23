@@ -10,7 +10,7 @@ import { navigateToNextBlock } from '../navigation/flowNavigation';
 import { QUIZ_MIN_TO_WIN } from '../config/quiz';
 import { CONTENT } from '../config/content';
 
-export default function ResultScreen({ route, navigation }: ScreenProps<'Result'>) {
+export default function ResultScreen({ route, navigation: _navigation }: ScreenProps<'Result'>) {
   const { score, total } = route.params;
   const eligible = score >= QUIZ_MIN_TO_WIN;
   const session = useSession();

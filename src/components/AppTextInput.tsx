@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useEffect, useId, useImperativeHandle, useRef } from 'react';
 import { Animated, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useKeyboard } from '../context/KeyboardContext';
 import type { KeyboardMode } from '../components/AppKeyboard';
@@ -68,7 +68,7 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
     ref,
   ) => {
     const keyboard = useKeyboard();
-    const id = useRef(Math.random().toString(36)).current;
+    const id = useId();
     const isActive = keyboard.activeId === id;
 
     const ownY = useRef(0);
