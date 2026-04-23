@@ -155,7 +155,7 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
             placeholder={placeholder}
             placeholderTextColor={Colors.textSecondary}
             autoCapitalize={mode === 'alpha' ? 'words' : 'none'}
-            keyboardType={mode === 'numeric' ? 'number-pad' : mode === 'email' ? 'email-address' : 'default'}
+            keyboardType={mode === 'numeric' ? 'number-pad' : 'default'}
             returnKeyType="next"
             autoFocus={autoFocus}
           />
@@ -168,7 +168,9 @@ export const AppTextInput = forwardRef<AppTextInputRef, AppTextInputProps>(
       <Pressable
         style={styles.wrapper}
         onPress={focus}
-        onLayout={(e) => { ownY.current = e.nativeEvent.layout.y; }}
+        onLayout={(e) => {
+          ownY.current = e.nativeEvent.layout.y;
+        }}
       >
         <Text style={styles.label}>{label}</Text>
         <View style={[styles.input, isActive && styles.inputFocused, !!error && styles.inputError]}>
@@ -218,7 +220,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.error,
   },
   inputText: {
-    flex: 1,
+    flexShrink: 1,
     fontSize: scale(16),
     color: Colors.text,
   },

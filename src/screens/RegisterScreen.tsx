@@ -28,8 +28,7 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
     Object.fromEntries(REGISTRATION_FIELDS.map((f) => [f.id, null])),
   );
 
-  const setValue = (id: string, value: string) =>
-    setValues((prev) => ({ ...prev, [id]: value }));
+  const setValue = (id: string, value: string) => setValues((prev) => ({ ...prev, [id]: value }));
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
@@ -53,15 +52,13 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
     }
 
     const normalizedFields = Object.fromEntries(
-      REGISTRATION_FIELDS.map((f) => [
-        f.id,
-        f.mode === 'email'
-          ? (values[f.id] ?? '').trim().toLowerCase()
-          : (values[f.id] ?? '').trim(),
-      ]),
+      REGISTRATION_FIELDS.map((f) => [f.id, (values[f.id] ?? '').trim()]),
     );
 
-    await session.recordRegistration({ fields: normalizedFields, submittedAt: new Date().toISOString() });
+    await session.recordRegistration({
+      fields: normalizedFields,
+      submittedAt: new Date().toISOString(),
+    });
     setSubmitting(false);
     navigateToNextBlock('register');
   };
@@ -80,7 +77,9 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
 
         <View
           style={styles.form}
-          onLayout={(e) => { formContainerY.current = e.nativeEvent.layout.y; }}
+          onLayout={(e) => {
+            formContainerY.current = e.nativeEvent.layout.y;
+          }}
         >
           {REGISTRATION_FIELDS.map((field, index) => {
             const isLast = index === REGISTRATION_FIELDS.length - 1;
@@ -96,8 +95,13 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
               scrollContainerY: formContainerY,
               returnLabel: isLast ? 'Pronto' : undefined,
               onSubmit: isLast
-                ? () => { keyboard.dismiss(); handleSubmit(); }
-                : () => { fieldRefs.current[nextField.id]?.focus(); },
+                ? () => {
+                    keyboard.dismiss();
+                    handleSubmit();
+                  }
+                : () => {
+                    fieldRefs.current[nextField.id]?.focus();
+                  },
             } as const;
 
             if (field.mask) {
@@ -105,7 +109,9 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
               return (
                 <AppTextInput
                   key={field.id}
-                  ref={(r) => { fieldRefs.current[field.id] = r; }}
+                  ref={(r) => {
+                    fieldRefs.current[field.id] = r;
+                  }}
                   {...sharedProps}
                   onKey={(k) =>
                     setValue(
@@ -122,7 +128,9 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
             return (
               <AppTextInput
                 key={field.id}
-                ref={(r) => { fieldRefs.current[field.id] = r; }}
+                ref={(r) => {
+                  fieldRefs.current[field.id] = r;
+                }}
                 {...sharedProps}
                 onChangeText={(v) => setValue(field.id, v)}
               />
@@ -136,10 +144,15 @@ export default function RegisterScreen({ navigation }: ScreenProps<'Register'>) 
             pressed && { opacity: 0.85 },
             submitting && { opacity: 0.6 },
           ]}
-          onPress={() => { keyboard.dismiss(); handleSubmit(); }}
+          onPress={() => {
+            keyboard.dismiss();
+            handleSubmit();
+          }}
           disabled={submitting}
         >
-          <Text style={styles.submitBtnText}>{submitting ? CONTENT.register.submitLoadingCta : CONTENT.register.submitCta}</Text>
+          <Text style={styles.submitBtnText}>
+            {submitting ? CONTENT.register.submitLoadingCta : CONTENT.register.submitCta}
+          </Text>
         </Pressable>
       </ScrollView>
       <KeyboardArea />
