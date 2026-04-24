@@ -76,6 +76,7 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
 
   return (
     <SafeAreaView style={styles.container}>
+      <KeyboardArea />
       <ScrollView
         ref={scrollRef}
         contentContainerStyle={styles.content}
@@ -152,7 +153,6 @@ export default function RegisterScreen({ navigation }: ScreenProps<"Register">) 
           <Text style={styles.submitBtnText}>{submitting ? "Salvando..." : "Continuar →"}</Text>
         </Pressable>
       </ScrollView>
-      <KeyboardArea />
     </SafeAreaView>
   );
 }

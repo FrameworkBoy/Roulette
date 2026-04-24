@@ -204,8 +204,8 @@ const RADIUS = scale(9);
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.background,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: Colors.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.border,
     paddingHorizontal: scale(8),
     paddingTop: scale(10),
     paddingBottom: scale(14),
@@ -251,20 +251,20 @@ const styles = StyleSheet.create({
   },
   keyLabel: {
     color: Colors.text,
-    fontSize: scale(17),
+    fontSize: scale(28),
     fontWeight: '500',
   },
   keyLabelLarge: {
-    fontSize: scale(26),
+    fontSize: scale(40),
     fontWeight: '600',
   },
   keyLabelMuted: {
     color: Colors.textSecondary,
-    fontSize: scale(15),
+    fontSize: scale(26),
   },
   keyLabelSubmit: {
     color: Colors.textOnPrimary,
-    fontSize: scale(15),
+    fontSize: scale(26),
     fontWeight: 'bold',
     letterSpacing: 0.3,
   },
